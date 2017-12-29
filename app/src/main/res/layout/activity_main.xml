@@ -13,8 +13,10 @@
         android:layout_marginBottom="80dp"
         android:layout_marginEnd="80dp"
         android:layout_marginStart="16dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="80dp"
         android:layout_marginTop="404dp"
-        android:text="+"
+        android:text="-"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toStartOf="@+id/button8"
@@ -28,8 +30,10 @@
         android:layout_marginBottom="80dp"
         android:layout_marginEnd="16dp"
         android:layout_marginStart="80dp"
+        android:layout_marginRight="16dp"
+        android:layout_marginLeft="80dp"
         android:layout_marginTop="404dp"
-        android:text="-"
+        android:text="+"
         android:textSize="36sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
@@ -60,7 +64,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Znesek:"
+                    android:text="Stanje:"
+                    android:layout_marginLeft="11dp"
                     android:textSize="36sp" />
 
                 <TextView
