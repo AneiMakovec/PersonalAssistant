@@ -43,9 +43,9 @@ public class DodajActivity extends AppCompatActivity {
         izberiKat.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DodajActivity.this, KategorijeActivity.class);
-                intent.putExtra("testKategorija", "to je test3");
-                startActivity(intent);
+                Intent intent2 = new Intent(DodajActivity.this, KategorijeActivity.class);
+                intent2.putExtra("testKategorija", "to je test3");
+                startActivity(intent2);
             }
         });
 
