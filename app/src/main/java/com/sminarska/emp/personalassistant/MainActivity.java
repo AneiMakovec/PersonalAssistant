@@ -1,6 +1,7 @@
 package com.sminarska.emp.personalassistant;
 
 import android.content.Intent;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import java.util.ArrayList;
@@ -15,13 +16,20 @@ import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
+import android.widget.ListView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
+    // expandable list
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
     List<String> listDataHeader;
     HashMap<String, List<String>> listDataChild;
+
+    // navigation drawer
+    List<String> drawerData;
+    DrawerLayout drawerLayout;
+    ListView listView;
 
 
     @Override
@@ -54,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
         // preparing list data
-        prepareListData();
+        prepareExpandableListData();
 
         listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
 
@@ -111,9 +119,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-     * Preparing the list data
+     * Preparing the expandable list data
      */
-    private void prepareListData() {
+    private void prepareExpandableListData() {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
@@ -129,13 +137,8 @@ public class MainActivity extends AppCompatActivity {
 
         // Adding child data
         List<String> top250 = new ArrayList<String>();
-        top250.add("The Shawshank Redemption");
-        top250.add("The Godfather");
-        top250.add("The Godfather: Part II");
-        top250.add("Pulp Fiction");
-        top250.add("The Good, the Bad and the Ugly");
-        top250.add("The Dark Knight");
-        top250.add("12 Angry Men");
+        top250.add("Bruto");
+        top250.add("Neto");
 
         List<String> nowShowing = new ArrayList<String>();
         nowShowing.add("The Conjuring");
@@ -195,5 +198,14 @@ public class MainActivity extends AppCompatActivity {
         listDataChild.put(listDataHeader.get(5), t3);
         listDataChild.put(listDataHeader.get(6), t4);
         listDataChild.put(listDataHeader.get(7), t5);
+    }
+
+    /*
+        Preparing the navigation drawer data
+     */
+    private void prepareNavigationDrawerData() {
+        drawerData = new ArrayList<String>();
+
+        // TODO
     }
 }
