@@ -1,3 +1,17 @@
 <resources>
     <string name="app_name">PersonalAssistant</string>
+
+    <string name="main_balance_value">0€</string>
+    <string name="main_balance_state">Stanje:</string>
+    <string name="main_button_plus">+</string>
+    <string name="main_button_minus">-</string>
+
+    <string name="drawer_first_subsection">Izračun na:</string>
+    <string name="drawer_second_subsection">Prikaz podatkov:</string>
+    <string name="drawer_first_week">Teden</string>
+    <string name="drawer_first_month">Mesec</string>
+    <string name="drawer_first_year">Leto</string>
+    <string name="drawer_second_list">Seznam</string>
+    <string name="drawer_second_graph">Graf</string>
+    <string name="drawer_second_stat">Statistika</string>
 </resources>
