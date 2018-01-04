@@ -17,6 +17,8 @@ import android.widget.RelativeLayout;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,6 +32,18 @@ public class MainActivity extends AppCompatActivity {
     // navigation drawer
     DrawerLayout drawerLayout;
     NavigationView drawerView;
+
+    // control
+    boolean displayWeek;
+    boolean displayMonth;
+    boolean displayYear;
+
+    boolean setListView;
+    boolean setGraphView;
+    boolean setStatView;
+
+    // data
+    HashMap<Integer, List<List<Integer>>> data;
 
 
     @Override
@@ -57,6 +71,8 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
 
         // PREPARE THE EXPANDABLE LIST
 
@@ -89,9 +105,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onGroupExpand(int groupPosition) {
+                /*
                 Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Expanded",
                         Toast.LENGTH_SHORT).show();
+                */
             }
         });
 
@@ -100,9 +118,11 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onGroupCollapse(int groupPosition) {
+                /*
                 Toast.makeText(getApplicationContext(),
                         listDataHeader.get(groupPosition) + " Collapsed",
                         Toast.LENGTH_SHORT).show();
+                */
 
             }
         });
@@ -114,8 +134,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         int groupPosition, int childPosition, long id) {
+                /*
                 // TODO Auto-generated method stub
                 Toast.makeText(getApplicationContext(), listDataHeader.get(groupPosition) + " : " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
+                */
                 return false;
             }
         });
@@ -136,11 +158,87 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         menuItem.setChecked(true);
+
+                        switch (menuItem.getItemId()) {
+                            case R.id.drawer_first_week:
+                                if (!displayWeek) {
+                                    displayWeek = true;
+                                    displayMonth = false;
+                                    displayYear = false;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam prikaz: tedensko", Toast.LENGTH_SHORT).show();
+
+                                    updateDisplay();
+                                }
+                                break;
+                            case R.id.drawer_first_month:
+                                if (!displayMonth) {
+                                    displayWeek = false;
+                                    displayMonth = true;
+                                    displayYear = false;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam prikaz: mesečno", Toast.LENGTH_SHORT).show();
+
+                                    updateDisplay();
+                                }
+                                break;
+                            case R.id.drawer_first_year:
+                                if (!displayYear) {
+                                    displayWeek = false;
+                                    displayMonth = false;
+                                    displayYear = true;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam prikaz: letno", Toast.LENGTH_SHORT).show();
+
+                                    updateDisplay();
+                                }
+                                break;
+                            case R.id.drawer_second_list:
+                                if (!setListView) {
+                                    setListView = true;
+                                    setGraphView = false;
+                                    setStatView = false;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam pogled: seznam", Toast.LENGTH_SHORT).show();
+
+                                    updateView();
+                                }
+                                break;
+                            case R.id.drawer_second_graph:
+                                if (!setGraphView) {
+                                    setListView = false;
+                                    setGraphView = true;
+                                    setStatView = false;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam pogled: slika", Toast.LENGTH_SHORT).show();
+
+                                    updateView();
+                                }
+                                break;
+                            case R.id.drawer_second_stat:
+                                if (!setStatView) {
+                                    setListView = false;
+                                    setGraphView = false;
+                                    setStatView = true;
+
+                                    Toast.makeText(getApplicationContext(), "Spreminjam pogled: statistika", Toast.LENGTH_SHORT).show();
+
+                                    updateView();
+                                }
+                                break;
+                            default:
+                                break;
+                        }
+
                         drawerLayout.closeDrawers();
                         return true;
                     }
                 });
 
+
+
+        // PREPARE THE DATA
+        data = new HashMap<Integer, List<List<Integer>>>();
     }
 
     /*
@@ -214,5 +312,33 @@ public class MainActivity extends AppCompatActivity {
         listDataChild.put(listDataHeader.get(5), igrace);
         listDataChild.put(listDataHeader.get(6), darila);
         listDataChild.put(listDataHeader.get(7), prostiCas);
+    }
+
+    /*
+     * Prepare the data structure to hold values
+     */
+    private void addToDataStructure(int category, int subCategory, int value) {
+        Calendar date = Calendar.getInstance();
+        int key = date.get(Calendar.DAY_OF_YEAR);
+
+        if (data.containsKey(key)) {
+            data.get(key).get(category).set(subCategory, value);
+        } else {
+
+        }
+    }
+
+    /*
+     * Update the display of values for chosen time interval
+     */
+    private void updateDisplay() {
+
+    }
+
+    /*
+     * Update the view of the main activity to the chosen form
+     */
+    private void updateView() {
+
     }
 }

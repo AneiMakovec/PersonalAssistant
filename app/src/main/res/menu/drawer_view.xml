@@ -1,19 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <group android:checkableBehavior="single">
         <item
             android:id="@+id/drawer_first_subsection"
             android:title="@string/drawer_first_subsection">
             <menu>
-                <item
-                    android:id="@+id/drawer_first_week"
-                    android:title="@string/drawer_first_week" />
-                <item
-                    android:id="@+id/drawer_first_month"
-                    android:title="@string/drawer_first_month" />
-                <item
-                    android:id="@+id/drawer_first_year"
-                    android:title="@string/drawer_first_year" />
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/drawer_first_week"
+                        android:title="@string/drawer_first_week" />
+                    <item
+                        android:id="@+id/drawer_first_month"
+                        android:title="@string/drawer_first_month" />
+                    <item
+                        android:id="@+id/drawer_first_year"
+                        android:title="@string/drawer_first_year" />
+                </group>
             </menu>
         </item>
 
@@ -21,16 +22,17 @@
             android:id="@+id/drawer_second_subsection"
             android:title="@string/drawer_second_subsection">
             <menu>
-                <item
-                    android:id="@+id/drawer_second_list"
-                    android:title="@string/drawer_second_list" />
-                <item
-                    android:id="@+id/drawer_second_graph"
-                    android:title="@string/drawer_second_graph" />
-                <item
-                    android:id="@+id/drawer_second_stat"
-                    android:title="@string/drawer_second_stat" />
+                <group android:checkableBehavior="single">
+                    <item
+                        android:id="@+id/drawer_second_list"
+                        android:title="@string/drawer_second_list" />
+                    <item
+                        android:id="@+id/drawer_second_graph"
+                        android:title="@string/drawer_second_graph" />
+                    <item
+                        android:id="@+id/drawer_second_stat"
+                        android:title="@string/drawer_second_stat" />
+                </group>
             </menu>
         </item>
-    </group>
 </menu>
