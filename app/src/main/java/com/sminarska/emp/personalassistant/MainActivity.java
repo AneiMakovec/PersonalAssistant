@@ -1,5 +1,6 @@
 package com.sminarska.emp.personalassistant;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -29,8 +30,6 @@ public class MainActivity extends AppCompatActivity {
     public static final int VSOTA = 0;
 
     public static final int PLACA = 0;
-    public static final int PLACA_BRUTO = 1;
-    public static final int PLACA_NETO = 2;
 
     public static final int POTNI_STROSKI = 1;
     public static final int POTNI_STROSKI_GORIVO = 1;
@@ -78,6 +77,11 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_END_DAY = "com.seminarska.emp.personalassistant.ENDDAY";
     public static final String EXTRA_DATA_PER_DAY = "com.seminarska.emp.personalassistant.DATA";
 
+    public static final String EXTRA_PREFIX = "com.seminarska.emp.personalassistant.PREFIX";
+
+    public static final int RESULT_REQUEST_ADD = 1;
+    public static final int RESULT_REQUEST_SUB = 2;
+
     // expandable list
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -89,13 +93,13 @@ public class MainActivity extends AppCompatActivity {
     NavigationView drawerView;
 
     // control
-    boolean displayWeek;
-    boolean displayMonth;
-    boolean displayYear;
+    boolean displayWeek = true;
+    boolean displayMonth = false;
+    boolean displayYear = false;
 
-    boolean setListView;
-    boolean setGraphView;
-    boolean setStatView;
+    boolean setListView = true;
+    boolean setGraphView = false;
+    boolean setStatView = false;
 
     // data
     SparseArray<List<List<Integer>>> data;
@@ -113,8 +117,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, DodajActivity.class);
-                intent.putExtra("testOdliv", "to je test1");
-                startActivity(intent);
+                startActivityForResult(intent, RESULT_REQUEST_SUB);
             }
         });
 
@@ -122,8 +125,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, DodajActivity.class);
-                intent.putExtra("testPriliv", "to je test2");
-                startActivity(intent);
+                startActivityForResult(intent, RESULT_REQUEST_ADD);
             }
         });
 
@@ -148,9 +150,6 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onGroupClick(ExpandableListView parent, View v,
                                         int groupPosition, long id) {
-                // Toast.makeText(getApplicationContext(),
-                // "Group Clicked " + listDataHeader.get(groupPosition),
-                // Toast.LENGTH_SHORT).show();
                 return false;
             }
         });
@@ -159,42 +158,14 @@ public class MainActivity extends AppCompatActivity {
         expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
 
             @Override
-            public void onGroupExpand(int groupPosition) {
-                /*
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Expanded",
-                        Toast.LENGTH_SHORT).show();
-                */
-            }
+            public void onGroupExpand(int groupPosition) {}
         });
 
         // Listview Group collasped listener
         expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
 
             @Override
-            public void onGroupCollapse(int groupPosition) {
-                /*
-                Toast.makeText(getApplicationContext(),
-                        listDataHeader.get(groupPosition) + " Collapsed",
-                        Toast.LENGTH_SHORT).show();
-                */
-
-            }
-        });
-
-        // TEGA NE BOVA RABLA
-        // Listview on child click listener
-        expListView.setOnChildClickListener(new OnChildClickListener() {
-
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
-                /*
-                // TODO Auto-generated method stub
-                Toast.makeText(getApplicationContext(), listDataHeader.get(groupPosition) + " : " + listDataChild.get(listDataHeader.get(groupPosition)).get(childPosition), Toast.LENGTH_SHORT).show();
-                */
-                return false;
-            }
+            public void onGroupCollapse(int groupPosition) {}
         });
 
 
@@ -223,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     Toast.makeText(getApplicationContext(), "Spreminjam prikaz: tedensko", Toast.LENGTH_SHORT).show();
 
-                                    updateDisplay();
+                                    refreshDisplay();
                                 }
                                 break;
                             case R.id.drawer_first_month:
@@ -234,7 +205,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     Toast.makeText(getApplicationContext(), "Spreminjam prikaz: mesečno", Toast.LENGTH_SHORT).show();
 
-                                    updateDisplay();
+                                    refreshDisplay();
                                 }
                                 break;
                             case R.id.drawer_first_year:
@@ -245,7 +216,7 @@ public class MainActivity extends AppCompatActivity {
 
                                     Toast.makeText(getApplicationContext(), "Spreminjam prikaz: letno", Toast.LENGTH_SHORT).show();
 
-                                    updateDisplay();
+                                    refreshDisplay();
                                 }
                                 break;
                             case R.id.drawer_second_list:
@@ -296,6 +267,35 @@ public class MainActivity extends AppCompatActivity {
         prepareDataStructure();
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        int amount = 0;
+        int catIndex = 0;
+        int subcatIndex = 0;
+
+        switch (requestCode) {
+            case RESULT_REQUEST_ADD:
+                if (resultCode == Activity.RESULT_OK) {
+                    amount = data.getIntExtra(DodajActivity.RESULT_ADDED_AMOUNT, 0);
+                    catIndex = data.getIntExtra(DodajActivity.RESULT_CATEGORY_INDEX, 0);
+                    subcatIndex = data.getIntExtra(DodajActivity.RESULT_SUBCATEGORY_INDEX, 0);
+                }
+                break;
+            case RESULT_REQUEST_SUB:
+                if (resultCode == Activity.RESULT_OK) {
+                    amount = - data.getIntExtra(DodajActivity.RESULT_ADDED_AMOUNT, 0);
+                    catIndex = data.getIntExtra(DodajActivity.RESULT_CATEGORY_INDEX, 0);
+                    subcatIndex = data.getIntExtra(DodajActivity.RESULT_SUBCATEGORY_INDEX, 0);
+                }
+                break;
+            default:
+                return;
+        }
+
+        addToDataStructure(catIndex, subcatIndex, amount);
+        refreshDisplay();
+    }
+
     /*
      * Preparing the expandable list data
      */
@@ -303,61 +303,62 @@ public class MainActivity extends AppCompatActivity {
         listDataHeader = new ArrayList<String>();
         listDataChild = new HashMap<String, List<String>>();
 
+        int size = 40;
+
         // Adding parent data
         listDataHeader.add("Plača");
-        listDataHeader.add("Potni stroški");
-        listDataHeader.add("Hrana");
-        listDataHeader.add("Obleke");
-        listDataHeader.add("Hišni stroški");
-        listDataHeader.add("Igrače");
-        listDataHeader.add("Darila");
-        listDataHeader.add("Prosti čas");
+        listDataHeader.add(resizeString("Potni stroški:", 0, size));
+        listDataHeader.add(resizeString("Hrana:", 0, size));
+        listDataHeader.add(resizeString("Obleke:", 0, size));
+        listDataHeader.add(resizeString("Hišni stroški:", 0, size));
+        listDataHeader.add(resizeString("Igrače:", 0, size));
+        listDataHeader.add(resizeString("Darila:", 0, size));
+        listDataHeader.add(resizeString("Prosti čas:", 0, size));
 
         // Adding child data
         List<String> placa = new ArrayList<String>();
-        placa.add("Bruto");
-        placa.add("Neto");
+        placa.add(resizeString("Skupaj:", 0, size));
 
         List<String> potStroski = new ArrayList<String>();
-        potStroski.add("Gorivo");
-        potStroski.add("Stroški za avto");
+        potStroski.add(resizeString("Gorivo:", 0, size));
+        potStroski.add(resizeString("Stroški za avto:", 0, size));
 
         List<String> hrana = new ArrayList<String>();
-        hrana.add("Zelenjava");
-        hrana.add("Mesni izdelki");
-        hrana.add("Izdelki iz žit");
-        hrana.add("Sadje");
-        hrana.add("Pijača");
-        hrana.add("Drugo");
+        hrana.add(resizeString("Zelenjava:", 0, size));
+        hrana.add(resizeString("Mesni izdelki:", 0, size));
+        hrana.add(resizeString("Izdelki iz žit:", 0, size));
+        hrana.add(resizeString("Sadje:", 0, size));
+        hrana.add(resizeString("Pijača:", 0, size));
+        hrana.add(resizeString("Drugo:", 0, size));
 
         List<String> obleke = new ArrayList<String>();
-        obleke.add("Zgornji del");
-        obleke.add("Spodnji del");
-        obleke.add("Obutev");
-        obleke.add("Dodatki");
+        obleke.add(resizeString("Zgornji del:", 0, size));
+        obleke.add(resizeString("Spodnji del:", 0, size));
+        obleke.add(resizeString("Obutev:",0, size));
+        obleke.add(resizeString("Dodatki:", 0, size));
 
         List<String> hisniStroski = new ArrayList<String>();
-        hisniStroski.add("Voda");
-        hisniStroski.add("Elektrika");
-        hisniStroski.add("Televizija/Internet");
-        hisniStroski.add("Ogrevanje");
-        hisniStroski.add("Drugo");
+        hisniStroski.add(resizeString("Voda:",0, size));
+        hisniStroski.add(resizeString("Elektrika:", 0, size));
+        hisniStroski.add(resizeString("Televizija/Internet:", 0, size));
+        hisniStroski.add(resizeString("Ogrevanje:", 0, size));
+        hisniStroski.add(resizeString("Drugo:", 0, size));
 
         List<String> igrace = new ArrayList<String>();
-        igrace.add("Velike");
-        igrace.add("Majhne");
-        igrace.add("Drugo");
+        igrace.add(resizeString("Velike:", 0, size));
+        igrace.add(resizeString("Majhne:", 0, size));
+        igrace.add(resizeString("Drugo:", 0, size));
 
         List<String> darila = new ArrayList<String>();
-        darila.add("Prazniki");
-        darila.add("Rojstni dnevi");
-        darila.add("Drugo");
+        darila.add(resizeString("Prazniki:", 0, size));
+        darila.add(resizeString("Rojstni dnevi:", 0, size));
+        darila.add(resizeString("Drugo:", 0, size));
 
         List<String> prostiCas = new ArrayList<String>();
-        prostiCas.add("Hobiji");
-        prostiCas.add("Šport");
-        prostiCas.add("Glasbila");
-        prostiCas.add("Drugo");
+        prostiCas.add(resizeString("Hobiji:", 0, size));
+        prostiCas.add(resizeString("Šport:", 0, size));
+        prostiCas.add(resizeString("Glasbila:", 0, size));
+        prostiCas.add(resizeString("Drugo:", 0, size));
 
         listDataChild.put(listDataHeader.get(0), placa); // Header, Child data
         listDataChild.put(listDataHeader.get(1), potStroski);
@@ -379,19 +380,20 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Add a value to the data structure
      */
+    // TODO: popravi metodo addToDataStructure, da si bo beležila dneve vnosa in bo popravljala podatke v podatkovni strukturi
     private void addToDataStructure(int category, int subCategory, int value) {
         Calendar date = Calendar.getInstance();
         int key = date.get(Calendar.DAY_OF_YEAR);
 
         if (data.indexOfKey(key) >= 0) {
             data.get(key).get(category).set(subCategory, data.get(key).get(category).get(subCategory) + value);
-            data.get(key).get(category).set(VSOTA, data.get(key).get(category).get(VSOTA) + value);
+
+            if (category != PLACA)
+                data.get(key).get(category).set(VSOTA, data.get(key).get(category).get(VSOTA) + value);
         } else {
             List<List<Integer>> catList = new ArrayList<>();
 
             List<Integer> placa = new ArrayList<>();
-            placa.add(0);
-            placa.add(0);
             placa.add(0);
 
             List<Integer> potStroski = new ArrayList<>();
@@ -452,7 +454,9 @@ public class MainActivity extends AppCompatActivity {
             catList.add(prostiCas);
 
             catList.get(category).set(subCategory, value);
-            catList.get(category).set(VSOTA, value);
+
+            if (category != PLACA)
+                catList.get(category).set(VSOTA, value);
 
             data.append(key, catList);
         }
@@ -461,13 +465,244 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Update the display of values for chosen time interval
      */
-    private void updateDisplay() {
+    // TODO: (dont forget about the balance)
+    private void refreshDisplay() {
+        Calendar date = Calendar.getInstance();
+        int key = date.get(Calendar.DAY_OF_YEAR);
+        int balance = 0;
 
+        if (data.indexOfKey(key) >= 0) {
+            // število predhodnih dni
+            int day;
+
+            // seznam vsot podatkov
+            List<List<Integer>> values = new ArrayList<>();
+
+            List<Integer> placa = new ArrayList<>();
+            placa.add(0);
+
+            List<Integer> potStroski = new ArrayList<>();
+            potStroski.add(0);
+            potStroski.add(0);
+            potStroski.add(0);
+
+            List<Integer> hrana = new ArrayList<>();
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+
+            List<Integer> obleke = new ArrayList<>();
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+
+            List<Integer> hisniStroski = new ArrayList<>();
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+
+            List<Integer> igrace = new ArrayList<>();
+            igrace.add(0);
+            igrace.add(0);
+            igrace.add(0);
+            igrace.add(0);
+
+            List<Integer> darila = new ArrayList<>();
+            darila.add(0);
+            darila.add(0);
+            darila.add(0);
+            darila.add(0);
+
+            List<Integer> prostiCas = new ArrayList<>();
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+
+            values.add(placa);
+            values.add(potStroski);
+            values.add(hrana);
+            values.add(obleke);
+            values.add(hisniStroski);
+            values.add(igrace);
+            values.add(darila);
+            values.add(prostiCas);
+
+
+            // seznam podatkov za trenuten dan
+            List<List<Integer>> dailyValues;
+
+            // prikaz na teden
+            if (displayWeek) {
+                day = date.get(Calendar.DAY_OF_WEEK);
+                // prikaz na mesec
+            } else if (displayMonth) {
+                day = date.get(Calendar.DAY_OF_MONTH);
+                // prikaz na leto
+            } else if (displayYear) {
+                day = date.get(Calendar.DAY_OF_YEAR);
+            } else {
+                day = 0;
+                return;
+            }
+
+            // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
+            for (int i = 0; i < day; i++) {
+                if (key - i == 0)
+                    key = 365 + i;
+
+                if (data.indexOfKey(key - i) >= 0) {
+                    dailyValues = data.get(key - i);
+                } else {
+                    continue;
+                }
+
+                values.get(PLACA).set(VSOTA, values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA));
+
+                values.get(POTNI_STROSKI).set(VSOTA, values.get(POTNI_STROSKI).get(VSOTA) + dailyValues.get(POTNI_STROSKI).get(VSOTA));
+                values.get(POTNI_STROSKI).set(POTNI_STROSKI_GORIVO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO));
+                values.get(POTNI_STROSKI).set(POTNI_STROSKI_AVTO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO));
+
+                values.get(HRANA).set(VSOTA, values.get(HRANA).get(VSOTA) + dailyValues.get(HRANA).get(VSOTA));
+                values.get(HRANA).set(HRANA_ZELENJAVA, values.get(HRANA).get(HRANA_ZELENJAVA) + dailyValues.get(HRANA).get(HRANA_ZELENJAVA));
+                values.get(HRANA).set(HRANA_MESO, values.get(HRANA).get(HRANA_MESO) + dailyValues.get(HRANA).get(HRANA_MESO));
+                values.get(HRANA).set(HRANA_ZITA, values.get(HRANA).get(HRANA_ZITA) + dailyValues.get(HRANA).get(HRANA_ZITA));
+                values.get(HRANA).set(HRANA_SADJE, values.get(HRANA).get(HRANA_SADJE) + dailyValues.get(HRANA).get(HRANA_SADJE));
+                values.get(HRANA).set(HRANA_PIJACA, values.get(HRANA).get(HRANA_PIJACA) + dailyValues.get(HRANA).get(HRANA_PIJACA));
+                values.get(HRANA).set(HRANA_DRUGO, values.get(HRANA).get(HRANA_DRUGO) + dailyValues.get(HRANA).get(HRANA_DRUGO));
+
+                values.get(OBLEKE).set(VSOTA, values.get(OBLEKE).get(VSOTA) + dailyValues.get(OBLEKE).get(VSOTA));
+                values.get(OBLEKE).set(OBLEKE_ZGORNJI_DEL, values.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL));
+                values.get(OBLEKE).set(OBLEKE_SPODNJI_DEL, values.get(OBLEKE).get(OBLEKE_SPODNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_SPODNJI_DEL));
+                values.get(OBLEKE).set(OBLEKE_OBUTEV, values.get(OBLEKE).get(OBLEKE_OBUTEV) + dailyValues.get(OBLEKE).get(OBLEKE_OBUTEV));
+                values.get(OBLEKE).set(OBLEKE_DODATKI, values.get(OBLEKE).get(OBLEKE_DODATKI) + dailyValues.get(OBLEKE).get(OBLEKE_DODATKI));
+
+                values.get(HISNI_STROSKI).set(VSOTA, values.get(HISNI_STROSKI).get(VSOTA) + dailyValues.get(HISNI_STROSKI).get(VSOTA));
+                values.get(HISNI_STROSKI).set(HISNI_STROSKI_VODA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA));
+                values.get(HISNI_STROSKI).set(HISNI_STROSKI_ELEKTRIKA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA));
+                values.get(HISNI_STROSKI).set(HISNI_STROSKI_TV_INT, values.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT));
+                values.get(HISNI_STROSKI).set(HISNI_STROSKI_OGRAVANJE, values.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE));
+                values.get(HISNI_STROSKI).set(HISNI_STROSKI_DRUGO, values.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO));
+
+                values.get(IGRACE).set(VSOTA, values.get(IGRACE).get(VSOTA) + dailyValues.get(IGRACE).get(VSOTA));
+                values.get(IGRACE).set(IGRACE_VELIKE, values.get(IGRACE).get(IGRACE_VELIKE) + dailyValues.get(IGRACE).get(IGRACE_VELIKE));
+                values.get(IGRACE).set(IGRACE_MAJHNE, values.get(IGRACE).get(IGRACE_MAJHNE) + dailyValues.get(IGRACE).get(IGRACE_MAJHNE));
+                values.get(IGRACE).set(IGRACE_DRUGO, values.get(IGRACE).get(IGRACE_DRUGO) + dailyValues.get(IGRACE).get(IGRACE_DRUGO));
+
+                values.get(DARILA).set(VSOTA, values.get(DARILA).get(VSOTA) + dailyValues.get(DARILA).get(VSOTA));
+                values.get(DARILA).set(DARILA_PRAZNIKI, values.get(DARILA).get(DARILA_PRAZNIKI) + dailyValues.get(DARILA).get(DARILA_PRAZNIKI));
+                values.get(DARILA).set(DARILA_ROJSTNI_DNEVI, values.get(DARILA).get(DARILA_ROJSTNI_DNEVI) + dailyValues.get(DARILA).get(DARILA_ROJSTNI_DNEVI));
+                values.get(DARILA).set(DARILA_DRUGO, values.get(DARILA).get(DARILA_DRUGO) + dailyValues.get(DARILA).get(DARILA_DRUGO));
+
+                values.get(PROSTI_CAS).set(VSOTA, values.get(PROSTI_CAS).get(VSOTA) + dailyValues.get(PROSTI_CAS).get(VSOTA));
+                values.get(PROSTI_CAS).set(PROSTI_CAS_HOBIJI, values.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI));
+                values.get(PROSTI_CAS).set(PROSTI_CAS_SPORT, values.get(PROSTI_CAS).get(PROSTI_CAS_SPORT) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_SPORT));
+                values.get(PROSTI_CAS).set(PROSTI_CAS_GLASBILA, values.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA));
+                values.get(PROSTI_CAS).set(PROSTI_CAS_DRUGO, values.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO));
+            }
+
+            updateExpandableListData(values);
+        }
+    }
+
+    /*
+     * Updates the values in the expandable list
+     */
+    private void updateExpandableListData(List<List<Integer>> listWithValues) {
+        listDataHeader.clear();
+        listDataChild.clear();
+
+        int size = 40;
+
+        // Adding parent data
+        listDataHeader.add("Plača");
+        listDataHeader.add(resizeString("Potni stroški:", listWithValues.get(POTNI_STROSKI).get(VSOTA), size));
+        listDataHeader.add(resizeString("Hrana:", listWithValues.get(HRANA).get(VSOTA), size));
+        listDataHeader.add(resizeString("Obleke:", listWithValues.get(OBLEKE).get(VSOTA), size));
+        listDataHeader.add(resizeString("Hišni stroški:", listWithValues.get(HISNI_STROSKI).get(VSOTA), size));
+        listDataHeader.add(resizeString("Igrače:", listWithValues.get(IGRACE).get(VSOTA), size));
+        listDataHeader.add(resizeString("Darila:", listWithValues.get(DARILA).get(VSOTA), size));
+        listDataHeader.add(resizeString("Prosti čas:", listWithValues.get(PROSTI_CAS).get(VSOTA), size));
+
+        // Adding child data
+        List<String> placa = new ArrayList<String>();
+        placa.add(resizeString("Skupaj:", listWithValues.get(PLACA).get(VSOTA), size));
+
+        List<String> potStroski = new ArrayList<String>();
+        potStroski.add(resizeString("Gorivo:", listWithValues.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO), size));
+        potStroski.add(resizeString("Stroški za avto:", listWithValues.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO), size));
+
+        List<String> hrana = new ArrayList<String>();
+        hrana.add(resizeString("Zelenjava:", listWithValues.get(HRANA).get(HRANA_ZELENJAVA), size));
+        hrana.add(resizeString("Mesni izdelki:", listWithValues.get(HRANA).get(HRANA_MESO), size));
+        hrana.add(resizeString("Izdelki iz žit:", listWithValues.get(HRANA).get(HRANA_ZITA), size));
+        hrana.add(resizeString("Sadje:", listWithValues.get(HRANA).get(HRANA_SADJE), size));
+        hrana.add(resizeString("Pijača:", listWithValues.get(HRANA).get(HRANA_PIJACA), size));
+        hrana.add(resizeString("Drugo:", listWithValues.get(HRANA).get(HRANA_DRUGO), size));
+
+        List<String> obleke = new ArrayList<String>();
+        obleke.add(resizeString("Zgornji del:", listWithValues.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL), size));
+        obleke.add(resizeString("Spodnji del:", listWithValues.get(OBLEKE).get(OBLEKE_SPODNJI_DEL), size));
+        obleke.add(resizeString("Obutev:", listWithValues.get(OBLEKE).get(OBLEKE_OBUTEV), size));
+        obleke.add(resizeString("Dodatki:", listWithValues.get(OBLEKE).get(OBLEKE_DODATKI), size));
+
+        List<String> hisniStroski = new ArrayList<String>();
+        hisniStroski.add(resizeString("Voda:", listWithValues.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA), size));
+        hisniStroski.add(resizeString("Elektrika:", listWithValues.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA), size));
+        hisniStroski.add(resizeString("Televizija/Internet:", listWithValues.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT), size));
+        hisniStroski.add(resizeString("Ogrevanje:", listWithValues.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE), size));
+        hisniStroski.add(resizeString("Drugo:", listWithValues.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO), size));
+
+        List<String> igrace = new ArrayList<String>();
+        igrace.add(resizeString("Velike:", listWithValues.get(IGRACE).get(IGRACE_VELIKE), size));
+        igrace.add(resizeString("Majhne:", listWithValues.get(IGRACE).get(IGRACE_MAJHNE), size));
+        igrace.add(resizeString("Drugo:", listWithValues.get(IGRACE).get(IGRACE_DRUGO), size));
+
+        List<String> darila = new ArrayList<String>();
+        darila.add(resizeString("Prazniki:", listWithValues.get(DARILA).get(DARILA_PRAZNIKI), size));
+        darila.add(resizeString("Rojstni dnevi:", listWithValues.get(DARILA).get(DARILA_ROJSTNI_DNEVI), size));
+        darila.add(resizeString("Drugo:", listWithValues.get(DARILA).get(DARILA_DRUGO), size));
+
+        List<String> prostiCas = new ArrayList<String>();
+        prostiCas.add(resizeString("Hobiji:", listWithValues.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI), size));
+        prostiCas.add(resizeString("Šport:", listWithValues.get(PROSTI_CAS).get(PROSTI_CAS_SPORT), size));
+        prostiCas.add(resizeString("Glasbila:", listWithValues.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA), size));
+        prostiCas.add(resizeString("Drugo:", listWithValues.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO), size));
+
+        listDataChild.put(listDataHeader.get(0), placa);
+        listDataChild.put(listDataHeader.get(1), potStroski);
+        listDataChild.put(listDataHeader.get(2), hrana);
+        listDataChild.put(listDataHeader.get(3), obleke);
+        listDataChild.put(listDataHeader.get(4), hisniStroski);
+        listDataChild.put(listDataHeader.get(5), igrace);
+        listDataChild.put(listDataHeader.get(6), darila);
+        listDataChild.put(listDataHeader.get(7), prostiCas);
+
+        // get the listview
+        expListView = (ExpandableListView) findViewById(R.id.lvExp);
+
+        // get list adapter
+        listAdapter = new ExpandableListAdapter(this, listDataHeader, listDataChild);
+
+        // setting list adapter
+        expListView.setAdapter(listAdapter);
     }
 
     /*
      * Update the view of the main activity to the chosen form
      */
+    // TODO: updateView method for graph view and list view
+    // TODO: popravi updateView, da bo upoštevala popravljene vrednosti
     private void updateView() {
         Intent intent;
 
@@ -513,12 +748,15 @@ public class MainActivity extends AppCompatActivity {
 
             // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
             for (int i = 0; i < day; i++) {
+                if (key - i == 0)
+                    key = 365 + i;
+
                 values.clear();
 
                 if (data.indexOfKey(key - i) >= 0) {
                     dailyValues = data.get(key - i);
                 } else {
-                    startDay = key - i + 1;
+                    startDay = key - i;
                     break;
                 }
 
@@ -536,4 +774,25 @@ public class MainActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
+
+    /*
+     * Format a string to have a length of 20
+     */
+    private String resizeString(String left, int right, int size) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(left);
+
+        while (sb.length() + left.length() + 1 < size) {
+            sb.append(" ");
+        }
+
+        sb.append(right);
+        sb.append("€");
+
+        return sb.toString();
+    }
+
+
+    // TODO: dodaj metodo za shranjevanje podatkovne baze v notranji pomnilnik
 }
