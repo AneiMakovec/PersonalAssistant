@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
+import android.util.SparseArray;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -16,6 +17,7 @@ import android.widget.ExpandableListView.OnGroupExpandListener;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -23,6 +25,59 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
+    // indexes
+    public static final int VSOTA = 0;
+
+    public static final int PLACA = 0;
+    public static final int PLACA_BRUTO = 1;
+    public static final int PLACA_NETO = 2;
+
+    public static final int POTNI_STROSKI = 1;
+    public static final int POTNI_STROSKI_GORIVO = 1;
+    public static final int POTNI_STROSKI_AVTO = 2;
+
+    public static final int HRANA = 2;
+    public static final int HRANA_ZELENJAVA = 1;
+    public static final int HRANA_MESO = 2;
+    public static final int HRANA_ZITA = 3;
+    public static final int HRANA_SADJE = 4;
+    public static final int HRANA_PIJACA = 5;
+    public static final int HRANA_DRUGO = 6;
+
+    public static final int OBLEKE = 3;
+    public static final int OBLEKE_ZGORNJI_DEL = 1;
+    public static final int OBLEKE_SPODNJI_DEL = 2;
+    public static final int OBLEKE_OBUTEV = 3;
+    public static final int OBLEKE_DODATKI = 4;
+
+    public static final int HISNI_STROSKI = 4;
+    public static final int HISNI_STROSKI_VODA = 1;
+    public static final int HISNI_STROSKI_ELEKTRIKA = 2;
+    public static final int HISNI_STROSKI_TV_INT = 3;
+    public static final int HISNI_STROSKI_OGRAVANJE = 4;
+    public static final int HISNI_STROSKI_DRUGO = 5;
+
+    public static final int IGRACE = 5;
+    public static final int IGRACE_VELIKE = 1;
+    public static final int IGRACE_MAJHNE = 2;
+    public static final int IGRACE_DRUGO = 3;
+
+    public static final int DARILA = 6;
+    public static final int DARILA_PRAZNIKI = 1;
+    public static final int DARILA_ROJSTNI_DNEVI = 2;
+    public static final int DARILA_DRUGO = 3;
+
+    public static final int PROSTI_CAS = 7;
+    public static final int PROSTI_CAS_HOBIJI = 1;
+    public static final int PROSTI_CAS_SPORT = 2;
+    public static final int PROSTI_CAS_GLASBILA = 3;
+    public static final int PROSTI_CAS_DRUGO = 4;
+
+    // intent string
+    public static final String EXTRA_START_DAY = "com.seminarska.emp.personalassistant.STARTDAY";
+    public static final String EXTRA_END_DAY = "com.seminarska.emp.personalassistant.ENDDAY";
+    public static final String EXTRA_DATA_PER_DAY = "com.seminarska.emp.personalassistant.DATA";
+
     // expandable list
     ExpandableListAdapter listAdapter;
     ExpandableListView expListView;
@@ -43,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
     boolean setStatView;
 
     // data
-    HashMap<Integer, List<List<Integer>>> data;
+    SparseArray<List<List<Integer>>> data;
 
 
     @Override
@@ -238,7 +293,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         // PREPARE THE DATA
-        data = new HashMap<Integer, List<List<Integer>>>();
+        prepareDataStructure();
     }
 
     /*
@@ -315,16 +370,91 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /*
-     * Prepare the data structure to hold values
+     * Prapare the data structure
+     */
+    private void prepareDataStructure() {
+        data = new SparseArray<List<List<Integer>>>();
+    }
+
+    /*
+     * Add a value to the data structure
      */
     private void addToDataStructure(int category, int subCategory, int value) {
         Calendar date = Calendar.getInstance();
         int key = date.get(Calendar.DAY_OF_YEAR);
 
-        if (data.containsKey(key)) {
-            data.get(key).get(category).set(subCategory, value);
+        if (data.indexOfKey(key) >= 0) {
+            data.get(key).get(category).set(subCategory, data.get(key).get(category).get(subCategory) + value);
+            data.get(key).get(category).set(VSOTA, data.get(key).get(category).get(VSOTA) + value);
         } else {
+            List<List<Integer>> catList = new ArrayList<>();
 
+            List<Integer> placa = new ArrayList<>();
+            placa.add(0);
+            placa.add(0);
+            placa.add(0);
+
+            List<Integer> potStroski = new ArrayList<>();
+            potStroski.add(0);
+            potStroski.add(0);
+            potStroski.add(0);
+
+            List<Integer> hrana = new ArrayList<>();
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+            hrana.add(0);
+
+            List<Integer> obleke = new ArrayList<>();
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+            obleke.add(0);
+
+            List<Integer> hisniStroski = new ArrayList<>();
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+            hisniStroski.add(0);
+
+            List<Integer> igrace = new ArrayList<>();
+            igrace.add(0);
+            igrace.add(0);
+            igrace.add(0);
+            igrace.add(0);
+
+            List<Integer> darila = new ArrayList<>();
+            darila.add(0);
+            darila.add(0);
+            darila.add(0);
+            darila.add(0);
+
+            List<Integer> prostiCas = new ArrayList<>();
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+            prostiCas.add(0);
+
+            catList.add(placa);
+            catList.add(potStroski);
+            catList.add(hrana);
+            catList.add(obleke);
+            catList.add(hisniStroski);
+            catList.add(igrace);
+            catList.add(darila);
+            catList.add(prostiCas);
+
+            catList.get(category).set(subCategory, value);
+            catList.get(category).set(VSOTA, value);
+
+            data.append(key, catList);
         }
     }
 
@@ -339,6 +469,71 @@ public class MainActivity extends AppCompatActivity {
      * Update the view of the main activity to the chosen form
      */
     private void updateView() {
+        Intent intent;
 
+        if (setListView) {
+
+        } else if (setGraphView) {
+
+        } else if (setStatView) {
+            Calendar date = Calendar.getInstance();
+            int key = date.get(Calendar.DAY_OF_YEAR);
+
+            // začetni in končni datum uporabljen pri izrisu grafa
+            int startDay, endDay;
+
+            // število predhodnih dni
+            int day;
+
+            // začasen seznam podatkov po kategorijah
+            List<Integer> values = new ArrayList<>();
+
+            // seznam podatkov, ki jih pošljemo aktivnosti s statistiko
+            List<List<Integer>> graphValues = new ArrayList<>();
+
+            // seznam podatkov za trenuten dan
+            List<List<Integer>> dailyValues;
+
+            // prikaz na teden
+            if (displayWeek) {
+                day = date.get(Calendar.DAY_OF_WEEK);
+            // prikaz na mesec
+            } else if (displayMonth) {
+                day = date.get(Calendar.DAY_OF_MONTH);
+            // prikaz na leto
+            } else if (displayYear) {
+                day = date.get(Calendar.DAY_OF_YEAR);
+            } else {
+                day = 0;
+                return;
+            }
+
+            startDay = key;
+            endDay = key;
+
+            // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
+            for (int i = 0; i < day; i++) {
+                values.clear();
+
+                if (data.indexOfKey(key - i) >= 0) {
+                    dailyValues = data.get(key - i);
+                } else {
+                    startDay = key - i + 1;
+                    break;
+                }
+
+                for (int j = 0; j < 8; j++) {
+                    values.add(dailyValues.get(j).get(VSOTA));
+                }
+
+                graphValues.add(values);
+            }
+
+            intent = new Intent(this, StatActivity.class);
+            intent.putExtra(EXTRA_START_DAY, startDay);
+            intent.putExtra(EXTRA_END_DAY, endDay);
+            intent.putExtra(EXTRA_DATA_PER_DAY, (Serializable) graphValues);
+            startActivity(intent);
+        }
     }
 }
