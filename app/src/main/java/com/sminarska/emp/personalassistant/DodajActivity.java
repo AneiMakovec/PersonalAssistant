@@ -213,7 +213,7 @@ public class DodajActivity extends AppCompatActivity {
                     // preveri, če je uporabnik vnesel znesek
                     if (!rezultat.getText().equals("")) {
                         // preveri, če je vnesen znesek v pravilnem formatu
-                        if (rezultat.getText().toString().contains("+") || rezultat.getText().toString().contains("-") || rezultat.getText().toString().contains("*") || rezultat.getText().toString().contains("/")) {
+                        if (!rezultat.getText().toString().contains("+") || !rezultat.getText().toString().contains("-") || !rezultat.getText().toString().contains("*") || !rezultat.getText().toString().contains("/")) {
                             int catIndex;
                             int subcatIndex;
 
