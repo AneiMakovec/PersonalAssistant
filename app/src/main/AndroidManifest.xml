@@ -23,6 +23,8 @@
             android:resource="@array/preloaded_fonts" />
 
         <activity android:name=".KategorijeActivity"></activity>
+
+        <activity android:name=".StatActivity"></activity>
     </application>
 
 </manifest>

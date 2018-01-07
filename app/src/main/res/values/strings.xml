@@ -15,10 +15,6 @@
     <string name="drawer_second_graph">Graf</string>
     <string name="drawer_second_stat">Statistika</string>
 
-    <string name="stat_income">Prihodki:</string>
-    <string name="stat_income_value">0€</string>
-    <string name="stat_outcome">Odhodki:</string>
-    <string name="stat_outcome_value">0€</string>
-    <string name="stat_balance">Ostanek:</string>
-    <string name="stat_balance_value">0€</string>
+    <string name="stat_return_button">Nazaj</string>
+
 </resources>

@@ -3,6 +3,8 @@ package com.sminarska.emp.personalassistant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
@@ -76,13 +78,17 @@ public class StatActivity extends AppCompatActivity {
 
         int balance = income - outcome;
 
-        TextView incomeValue = (TextView) findViewById(R.id.income_value);
-        TextView outcomeValue = (TextView) findViewById(R.id.outcome_value);
-        TextView ballanceValue = (TextView) findViewById(R.id.balance_value);
+        TextView incomeValue = (TextView) findViewById(R.id.stat_income);
+        TextView outcomeValue = (TextView) findViewById(R.id.stat_outcome);
+        TextView ballanceValue = (TextView) findViewById(R.id.stat_balance);
 
-        incomeValue.setText(income);
-        outcomeValue.setText(outcome);
-        ballanceValue.setText(balance);
+        String incomeString = "Prihodki: " + Integer.toString(income);
+        String outcomeString = "Odhodki: " + Integer.toString(outcome);
+        String balanceString = "Ostanek: " + Integer.toString(balance);
+
+        incomeValue.setText(incomeString);
+        outcomeValue.setText(outcomeString);
+        ballanceValue.setText(balanceString);
 
         LineDataSet placaSet = new LineDataSet(entryPlaca, "Plača");
         placaSet.setAxisDependency(YAxis.AxisDependency.LEFT);
@@ -117,5 +123,14 @@ public class StatActivity extends AppCompatActivity {
 
         chart.setData(graphData);
         chart.invalidate();
+
+        Button returnButton = (Button) findViewById(R.id.stat_return_button);
+
+        returnButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
     }
 }

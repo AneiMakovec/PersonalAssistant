@@ -226,7 +226,7 @@ public class MainActivity extends AppCompatActivity {
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        menuItem.setChecked(true);
+                        //menuItem.setChecked(true);
 
                         switch (menuItem.getItemId()) {
                             case R.id.drawer_first_week:
@@ -335,8 +335,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
+    protected void onStop() {
+        super.onStop();
 
         /*
         SharedPreferences settings = getSharedPreferences(PREFERENCES_FILE_NAME, 0);
@@ -427,7 +427,7 @@ public class MainActivity extends AppCompatActivity {
      * Prapare the data structure
      */
     private void prepareDataStructure() {
-        data = new SparseArray<List<List<Integer>>>();
+        data = new SparseArray<>();
 
         restoredDataStructure = restoreData();
     }
@@ -522,160 +522,160 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Update the display of values for chosen time interval
      */
+    // TODO: poglej zakaj se restoran data ne ohrani med metodami restoreData in refreshDisplay
     private void refreshDisplay() {
         Calendar date = Calendar.getInstance();
         int balance = 0;
 
-        if (data.indexOfKey(key) >= 0) {
-            // število predhodnih dni
-            int day;
+        // število predhodnih dni
+        int day;
 
-            // seznam vsot podatkov
-            List<List<Integer>> values = new ArrayList<>();
+        // seznam vsot podatkov
+        List<List<Integer>> values = new ArrayList<>();
 
-            List<Integer> placa = new ArrayList<>();
-            placa.add(0);
+        List<Integer> placa = new ArrayList<>();
+        placa.add(0);
 
-            List<Integer> potStroski = new ArrayList<>();
-            potStroski.add(0);
-            potStroski.add(0);
-            potStroski.add(0);
+        List<Integer> potStroski = new ArrayList<>();
+        potStroski.add(0);
+        potStroski.add(0);
+        potStroski.add(0);
 
-            List<Integer> hrana = new ArrayList<>();
-            hrana.add(0);
-            hrana.add(0);
-            hrana.add(0);
-            hrana.add(0);
-            hrana.add(0);
-            hrana.add(0);
-            hrana.add(0);
+        List<Integer> hrana = new ArrayList<>();
+        hrana.add(0);
+        hrana.add(0);
+        hrana.add(0);
+        hrana.add(0);
+        hrana.add(0);
+        hrana.add(0);
+        hrana.add(0);
 
-            List<Integer> obleke = new ArrayList<>();
-            obleke.add(0);
-            obleke.add(0);
-            obleke.add(0);
-            obleke.add(0);
-            obleke.add(0);
+        List<Integer> obleke = new ArrayList<>();
+        obleke.add(0);
+        obleke.add(0);
+        obleke.add(0);
+        obleke.add(0);
+        obleke.add(0);
 
-            List<Integer> hisniStroski = new ArrayList<>();
-            hisniStroski.add(0);
-            hisniStroski.add(0);
-            hisniStroski.add(0);
-            hisniStroski.add(0);
-            hisniStroski.add(0);
-            hisniStroski.add(0);
+        List<Integer> hisniStroski = new ArrayList<>();
+        hisniStroski.add(0);
+        hisniStroski.add(0);
+        hisniStroski.add(0);
+        hisniStroski.add(0);
+        hisniStroski.add(0);
+        hisniStroski.add(0);
 
-            List<Integer> igrace = new ArrayList<>();
-            igrace.add(0);
-            igrace.add(0);
-            igrace.add(0);
-            igrace.add(0);
+        List<Integer> igrace = new ArrayList<>();
+        igrace.add(0);
+        igrace.add(0);
+        igrace.add(0);
+        igrace.add(0);
 
-            List<Integer> darila = new ArrayList<>();
-            darila.add(0);
-            darila.add(0);
-            darila.add(0);
-            darila.add(0);
+        List<Integer> darila = new ArrayList<>();
+        darila.add(0);
+        darila.add(0);
+        darila.add(0);
+        darila.add(0);
 
-            List<Integer> prostiCas = new ArrayList<>();
-            prostiCas.add(0);
-            prostiCas.add(0);
-            prostiCas.add(0);
-            prostiCas.add(0);
-            prostiCas.add(0);
+        List<Integer> prostiCas = new ArrayList<>();
+        prostiCas.add(0);
+        prostiCas.add(0);
+        prostiCas.add(0);
+        prostiCas.add(0);
+        prostiCas.add(0);
 
-            values.add(placa);
-            values.add(potStroski);
-            values.add(hrana);
-            values.add(obleke);
-            values.add(hisniStroski);
-            values.add(igrace);
-            values.add(darila);
-            values.add(prostiCas);
+        values.add(placa);
+        values.add(potStroski);
+        values.add(hrana);
+        values.add(obleke);
+        values.add(hisniStroski);
+        values.add(igrace);
+        values.add(darila);
+        values.add(prostiCas);
 
+        // seznam podatkov za trenuten dan
+        List<List<Integer>> dailyValues;
 
-            // seznam podatkov za trenuten dan
-            List<List<Integer>> dailyValues;
-
-            // prikaz na teden
-            if (displayWeek) {
-                day = date.get(Calendar.DAY_OF_WEEK);
-                // prikaz na mesec
-            } else if (displayMonth) {
-                day = date.get(Calendar.DAY_OF_MONTH);
-                // prikaz na leto
-            } else if (displayYear) {
-                day = date.get(Calendar.DAY_OF_YEAR);
-            } else {
-                day = 0;
-                return;
-            }
-
-            // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
-            for (int i = 0; i < day; i++) {
-                if (key - i == 0)
-                    key = 365 + i;
-
-                if (data.indexOfKey(key - i) >= 0) {
-                    dailyValues = data.get(key - i);
-                } else {
-                    continue;
-                }
-
-                balance += values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA);
-                values.get(PLACA).set(VSOTA, values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA));
-
-                balance -= values.get(POTNI_STROSKI).get(VSOTA) + dailyValues.get(POTNI_STROSKI).get(VSOTA);
-                values.get(POTNI_STROSKI).set(VSOTA, values.get(POTNI_STROSKI).get(VSOTA) + dailyValues.get(POTNI_STROSKI).get(VSOTA));
-                values.get(POTNI_STROSKI).set(POTNI_STROSKI_GORIVO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO));
-                values.get(POTNI_STROSKI).set(POTNI_STROSKI_AVTO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO));
-
-                balance -= values.get(HRANA).get(VSOTA) + dailyValues.get(HRANA).get(VSOTA);
-                values.get(HRANA).set(VSOTA, values.get(HRANA).get(VSOTA) + dailyValues.get(HRANA).get(VSOTA));
-                values.get(HRANA).set(HRANA_ZELENJAVA, values.get(HRANA).get(HRANA_ZELENJAVA) + dailyValues.get(HRANA).get(HRANA_ZELENJAVA));
-                values.get(HRANA).set(HRANA_MESO, values.get(HRANA).get(HRANA_MESO) + dailyValues.get(HRANA).get(HRANA_MESO));
-                values.get(HRANA).set(HRANA_ZITA, values.get(HRANA).get(HRANA_ZITA) + dailyValues.get(HRANA).get(HRANA_ZITA));
-                values.get(HRANA).set(HRANA_SADJE, values.get(HRANA).get(HRANA_SADJE) + dailyValues.get(HRANA).get(HRANA_SADJE));
-                values.get(HRANA).set(HRANA_PIJACA, values.get(HRANA).get(HRANA_PIJACA) + dailyValues.get(HRANA).get(HRANA_PIJACA));
-                values.get(HRANA).set(HRANA_DRUGO, values.get(HRANA).get(HRANA_DRUGO) + dailyValues.get(HRANA).get(HRANA_DRUGO));
-
-                balance -= values.get(OBLEKE).get(VSOTA) + dailyValues.get(OBLEKE).get(VSOTA);
-                values.get(OBLEKE).set(VSOTA, values.get(OBLEKE).get(VSOTA) + dailyValues.get(OBLEKE).get(VSOTA));
-                values.get(OBLEKE).set(OBLEKE_ZGORNJI_DEL, values.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL));
-                values.get(OBLEKE).set(OBLEKE_SPODNJI_DEL, values.get(OBLEKE).get(OBLEKE_SPODNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_SPODNJI_DEL));
-                values.get(OBLEKE).set(OBLEKE_OBUTEV, values.get(OBLEKE).get(OBLEKE_OBUTEV) + dailyValues.get(OBLEKE).get(OBLEKE_OBUTEV));
-                values.get(OBLEKE).set(OBLEKE_DODATKI, values.get(OBLEKE).get(OBLEKE_DODATKI) + dailyValues.get(OBLEKE).get(OBLEKE_DODATKI));
-
-                balance -= values.get(HISNI_STROSKI).get(VSOTA) + dailyValues.get(HISNI_STROSKI).get(VSOTA);
-                values.get(HISNI_STROSKI).set(VSOTA, values.get(HISNI_STROSKI).get(VSOTA) + dailyValues.get(HISNI_STROSKI).get(VSOTA));
-                values.get(HISNI_STROSKI).set(HISNI_STROSKI_VODA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA));
-                values.get(HISNI_STROSKI).set(HISNI_STROSKI_ELEKTRIKA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA));
-                values.get(HISNI_STROSKI).set(HISNI_STROSKI_TV_INT, values.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT));
-                values.get(HISNI_STROSKI).set(HISNI_STROSKI_OGRAVANJE, values.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE));
-                values.get(HISNI_STROSKI).set(HISNI_STROSKI_DRUGO, values.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO));
-
-                balance -= values.get(IGRACE).get(VSOTA) + dailyValues.get(IGRACE).get(VSOTA);
-                values.get(IGRACE).set(VSOTA, values.get(IGRACE).get(VSOTA) + dailyValues.get(IGRACE).get(VSOTA));
-                values.get(IGRACE).set(IGRACE_VELIKE, values.get(IGRACE).get(IGRACE_VELIKE) + dailyValues.get(IGRACE).get(IGRACE_VELIKE));
-                values.get(IGRACE).set(IGRACE_MAJHNE, values.get(IGRACE).get(IGRACE_MAJHNE) + dailyValues.get(IGRACE).get(IGRACE_MAJHNE));
-                values.get(IGRACE).set(IGRACE_DRUGO, values.get(IGRACE).get(IGRACE_DRUGO) + dailyValues.get(IGRACE).get(IGRACE_DRUGO));
-
-                balance -= values.get(DARILA).get(VSOTA) + dailyValues.get(DARILA).get(VSOTA);
-                values.get(DARILA).set(VSOTA, values.get(DARILA).get(VSOTA) + dailyValues.get(DARILA).get(VSOTA));
-                values.get(DARILA).set(DARILA_PRAZNIKI, values.get(DARILA).get(DARILA_PRAZNIKI) + dailyValues.get(DARILA).get(DARILA_PRAZNIKI));
-                values.get(DARILA).set(DARILA_ROJSTNI_DNEVI, values.get(DARILA).get(DARILA_ROJSTNI_DNEVI) + dailyValues.get(DARILA).get(DARILA_ROJSTNI_DNEVI));
-                values.get(DARILA).set(DARILA_DRUGO, values.get(DARILA).get(DARILA_DRUGO) + dailyValues.get(DARILA).get(DARILA_DRUGO));
-
-                balance -= values.get(PROSTI_CAS).get(VSOTA) + dailyValues.get(PROSTI_CAS).get(VSOTA);
-                values.get(PROSTI_CAS).set(VSOTA, values.get(PROSTI_CAS).get(VSOTA) + dailyValues.get(PROSTI_CAS).get(VSOTA));
-                values.get(PROSTI_CAS).set(PROSTI_CAS_HOBIJI, values.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI));
-                values.get(PROSTI_CAS).set(PROSTI_CAS_SPORT, values.get(PROSTI_CAS).get(PROSTI_CAS_SPORT) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_SPORT));
-                values.get(PROSTI_CAS).set(PROSTI_CAS_GLASBILA, values.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA));
-                values.get(PROSTI_CAS).set(PROSTI_CAS_DRUGO, values.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO));
-            }
-
-            updateExpandableListData(values, balance);
+        // prikaz na teden
+        if (displayWeek) {
+            day = date.get(Calendar.DAY_OF_WEEK);
+            // prikaz na mesec
+        } else if (displayMonth) {
+            day = date.get(Calendar.DAY_OF_MONTH);
+            // prikaz na leto
+        } else if (displayYear) {
+            day = date.get(Calendar.DAY_OF_YEAR);
+        } else {
+            day = 0;
+            return;
         }
+
+        // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
+        for (int i = 0; i < day; i++) {
+            if (key - i == 0)
+                key = 365 + i;
+
+            if (data.indexOfKey(key - i) >= 0) {
+                dailyValues = data.get(key - i);
+            } else {
+                continue;
+            }
+
+            Log.d("VSOTA", Integer.toString(data.get(key - i).get(PLACA).get(VSOTA)));
+
+            balance += values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA);
+            values.get(PLACA).set(VSOTA, values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA));
+
+            balance -= values.get(POTNI_STROSKI).get(VSOTA) + dailyValues.get(POTNI_STROSKI).get(VSOTA);
+            values.get(POTNI_STROSKI).set(VSOTA, values.get(POTNI_STROSKI).get(VSOTA) + dailyValues.get(POTNI_STROSKI).get(VSOTA));
+            values.get(POTNI_STROSKI).set(POTNI_STROSKI_GORIVO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO));
+            values.get(POTNI_STROSKI).set(POTNI_STROSKI_AVTO, values.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO) + dailyValues.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO));
+
+            balance -= values.get(HRANA).get(VSOTA) + dailyValues.get(HRANA).get(VSOTA);
+            values.get(HRANA).set(VSOTA, values.get(HRANA).get(VSOTA) + dailyValues.get(HRANA).get(VSOTA));
+            values.get(HRANA).set(HRANA_ZELENJAVA, values.get(HRANA).get(HRANA_ZELENJAVA) + dailyValues.get(HRANA).get(HRANA_ZELENJAVA));
+            values.get(HRANA).set(HRANA_MESO, values.get(HRANA).get(HRANA_MESO) + dailyValues.get(HRANA).get(HRANA_MESO));
+            values.get(HRANA).set(HRANA_ZITA, values.get(HRANA).get(HRANA_ZITA) + dailyValues.get(HRANA).get(HRANA_ZITA));
+            values.get(HRANA).set(HRANA_SADJE, values.get(HRANA).get(HRANA_SADJE) + dailyValues.get(HRANA).get(HRANA_SADJE));
+            values.get(HRANA).set(HRANA_PIJACA, values.get(HRANA).get(HRANA_PIJACA) + dailyValues.get(HRANA).get(HRANA_PIJACA));
+            values.get(HRANA).set(HRANA_DRUGO, values.get(HRANA).get(HRANA_DRUGO) + dailyValues.get(HRANA).get(HRANA_DRUGO));
+
+            balance -= values.get(OBLEKE).get(VSOTA) + dailyValues.get(OBLEKE).get(VSOTA);
+            values.get(OBLEKE).set(VSOTA, values.get(OBLEKE).get(VSOTA) + dailyValues.get(OBLEKE).get(VSOTA));
+            values.get(OBLEKE).set(OBLEKE_ZGORNJI_DEL, values.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_ZGORNJI_DEL));
+            values.get(OBLEKE).set(OBLEKE_SPODNJI_DEL, values.get(OBLEKE).get(OBLEKE_SPODNJI_DEL) + dailyValues.get(OBLEKE).get(OBLEKE_SPODNJI_DEL));
+            values.get(OBLEKE).set(OBLEKE_OBUTEV, values.get(OBLEKE).get(OBLEKE_OBUTEV) + dailyValues.get(OBLEKE).get(OBLEKE_OBUTEV));
+            values.get(OBLEKE).set(OBLEKE_DODATKI, values.get(OBLEKE).get(OBLEKE_DODATKI) + dailyValues.get(OBLEKE).get(OBLEKE_DODATKI));
+
+            balance -= values.get(HISNI_STROSKI).get(VSOTA) + dailyValues.get(HISNI_STROSKI).get(VSOTA);
+            values.get(HISNI_STROSKI).set(VSOTA, values.get(HISNI_STROSKI).get(VSOTA) + dailyValues.get(HISNI_STROSKI).get(VSOTA));
+            values.get(HISNI_STROSKI).set(HISNI_STROSKI_VODA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_VODA));
+            values.get(HISNI_STROSKI).set(HISNI_STROSKI_ELEKTRIKA, values.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_ELEKTRIKA));
+            values.get(HISNI_STROSKI).set(HISNI_STROSKI_TV_INT, values.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_TV_INT));
+            values.get(HISNI_STROSKI).set(HISNI_STROSKI_OGRAVANJE, values.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_OGRAVANJE));
+            values.get(HISNI_STROSKI).set(HISNI_STROSKI_DRUGO, values.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO) + dailyValues.get(HISNI_STROSKI).get(HISNI_STROSKI_DRUGO));
+
+            balance -= values.get(IGRACE).get(VSOTA) + dailyValues.get(IGRACE).get(VSOTA);
+            values.get(IGRACE).set(VSOTA, values.get(IGRACE).get(VSOTA) + dailyValues.get(IGRACE).get(VSOTA));
+            values.get(IGRACE).set(IGRACE_VELIKE, values.get(IGRACE).get(IGRACE_VELIKE) + dailyValues.get(IGRACE).get(IGRACE_VELIKE));
+            values.get(IGRACE).set(IGRACE_MAJHNE, values.get(IGRACE).get(IGRACE_MAJHNE) + dailyValues.get(IGRACE).get(IGRACE_MAJHNE));
+            values.get(IGRACE).set(IGRACE_DRUGO, values.get(IGRACE).get(IGRACE_DRUGO) + dailyValues.get(IGRACE).get(IGRACE_DRUGO));
+
+            balance -= values.get(DARILA).get(VSOTA) + dailyValues.get(DARILA).get(VSOTA);
+            values.get(DARILA).set(VSOTA, values.get(DARILA).get(VSOTA) + dailyValues.get(DARILA).get(VSOTA));
+            values.get(DARILA).set(DARILA_PRAZNIKI, values.get(DARILA).get(DARILA_PRAZNIKI) + dailyValues.get(DARILA).get(DARILA_PRAZNIKI));
+            values.get(DARILA).set(DARILA_ROJSTNI_DNEVI, values.get(DARILA).get(DARILA_ROJSTNI_DNEVI) + dailyValues.get(DARILA).get(DARILA_ROJSTNI_DNEVI));
+            values.get(DARILA).set(DARILA_DRUGO, values.get(DARILA).get(DARILA_DRUGO) + dailyValues.get(DARILA).get(DARILA_DRUGO));
+
+            balance -= values.get(PROSTI_CAS).get(VSOTA) + dailyValues.get(PROSTI_CAS).get(VSOTA);
+            values.get(PROSTI_CAS).set(VSOTA, values.get(PROSTI_CAS).get(VSOTA) + dailyValues.get(PROSTI_CAS).get(VSOTA));
+            values.get(PROSTI_CAS).set(PROSTI_CAS_HOBIJI, values.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_HOBIJI));
+            values.get(PROSTI_CAS).set(PROSTI_CAS_SPORT, values.get(PROSTI_CAS).get(PROSTI_CAS_SPORT) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_SPORT));
+            values.get(PROSTI_CAS).set(PROSTI_CAS_GLASBILA, values.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_GLASBILA));
+            values.get(PROSTI_CAS).set(PROSTI_CAS_DRUGO, values.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO));
+        }
+
+        updateExpandableListData(values, balance);
     }
 
     /*
@@ -766,16 +766,11 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Update the view of the main activity to the chosen form
      */
-    // TODO: updateView method for graph view and list view
     // TODO: popravi updateView, da bo upoštevala popravljene vrednosti
     private void updateView() {
         Intent intent;
 
-        if (setListView) {
-
-        } else if (setGraphView) {
-
-        } else if (setStatView) {
+        if (setStatView) {
             Calendar date = Calendar.getInstance();
 
             // začetni in končni datum uporabljen pri izrisu grafa
@@ -865,59 +860,87 @@ public class MainActivity extends AppCompatActivity {
             Scanner sc = new Scanner(new BufferedReader(new InputStreamReader(openFileInput(STORAGE_FILE_NAME))));
 
             if (sc.hasNext()) {
-                List<List<Integer>> tempList = new ArrayList<>();
-                int key;
+                List<List<Integer>> tempList;
+
+                int key = 0;
+
+                Log.d("RESTORE", "Restoring data");
 
                 while (sc.hasNext()) {
+                    tempList = new ArrayList<>();
+
                     key = Integer.parseInt(sc.nextLine());
+                    Log.d("KEY", Integer.toString(key));
 
-                    tempList.get(PLACA).add(VSOTA, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(PLACA).add(Integer.parseInt(sc.nextLine()));
+                    Log.d("PLAČA VSOTA", Integer.toString(tempList.get(PLACA).get(VSOTA)));
 
-                    tempList.get(POTNI_STROSKI).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(POTNI_STROSKI).add(POTNI_STROSKI_GORIVO, Integer.parseInt(sc.nextLine()));
-                    tempList.get(POTNI_STROSKI).add(POTNI_STROSKI_AVTO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    Log.d("POTNI STROŠKI VSOTA", Integer.toString(tempList.get(POTNI_STROSKI).get(VSOTA)));
+                    tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    Log.d("POTNI STROŠKI GORIVO", Integer.toString(tempList.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
+                    tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    Log.d("POTNI STROŠKI AVTO", Integer.toString(tempList.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
 
-                    tempList.get(HRANA).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_ZELENJAVA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_MESO, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_ZITA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_SADJE, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_PIJACA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HRANA).add(HRANA_DRUGO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    Log.d("HRANA VSOTA", Integer.toString(tempList.get(HRANA).get(VSOTA)));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
 
-                    tempList.get(OBLEKE).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(OBLEKE).add(OBLEKE_ZGORNJI_DEL, Integer.parseInt(sc.nextLine()));
-                    tempList.get(OBLEKE).add(OBLEKE_SPODNJI_DEL, Integer.parseInt(sc.nextLine()));
-                    tempList.get(OBLEKE).add(OBLEKE_OBUTEV, Integer.parseInt(sc.nextLine()));
-                    tempList.get(OBLEKE).add(OBLEKE_DODATKI, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(OBLEKE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(OBLEKE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(OBLEKE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(OBLEKE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(OBLEKE).add(Integer.parseInt(sc.nextLine()));
 
-                    tempList.get(HISNI_STROSKI).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HISNI_STROSKI).add(HISNI_STROSKI_VODA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HISNI_STROSKI).add(HISNI_STROSKI_ELEKTRIKA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HISNI_STROSKI).add(HISNI_STROSKI_TV_INT, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HISNI_STROSKI).add(HISNI_STROSKI_OGRAVANJE, Integer.parseInt(sc.nextLine()));
-                    tempList.get(HISNI_STROSKI).add(HISNI_STROSKI_DRUGO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(HISNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
 
-                    tempList.get(IGRACE).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(IGRACE).add(IGRACE_VELIKE, Integer.parseInt(sc.nextLine()));
-                    tempList.get(IGRACE).add(IGRACE_MAJHNE, Integer.parseInt(sc.nextLine()));
-                    tempList.get(IGRACE).add(IGRACE_DRUGO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(IGRACE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(IGRACE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(IGRACE).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(IGRACE).add(Integer.parseInt(sc.nextLine()));
 
-                    tempList.get(DARILA).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(DARILA).add(DARILA_PRAZNIKI, Integer.parseInt(sc.nextLine()));
-                    tempList.get(DARILA).add(DARILA_ROJSTNI_DNEVI, Integer.parseInt(sc.nextLine()));
-                    tempList.get(DARILA).add(DARILA_DRUGO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(DARILA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(DARILA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(DARILA).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(DARILA).add(Integer.parseInt(sc.nextLine()));
 
-                    tempList.get(PROSTI_CAS).add(VSOTA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(PROSTI_CAS).add(PROSTI_CAS_HOBIJI, Integer.parseInt(sc.nextLine()));
-                    tempList.get(PROSTI_CAS).add(PROSTI_CAS_SPORT, Integer.parseInt(sc.nextLine()));
-                    tempList.get(PROSTI_CAS).add(PROSTI_CAS_GLASBILA, Integer.parseInt(sc.nextLine()));
-                    tempList.get(PROSTI_CAS).add(PROSTI_CAS_DRUGO, Integer.parseInt(sc.nextLine()));
+                    tempList.add(new ArrayList<Integer>());
+                    tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
+                    tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
 
                     data.append(key, tempList);
 
-                    tempList.clear();
+                    Log.d("DATA", "Key: " + Integer.toString(key) + ", Values:");
+
+                    Log.d("PLAČA VSOTA", Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
+                    Log.d("POTNI STROŠKI VSOTA", Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
+                    Log.d("POTNI STROŠKI GORIVO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
+                    Log.d("POTNI STROŠKI AVTO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
+
+                    //tempList.clear();
                 }
+
+                this.key = key;
 
                 sc.close();
 
@@ -939,20 +962,27 @@ public class MainActivity extends AppCompatActivity {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(STORAGE_FILE_NAME, Context.MODE_PRIVATE)));
             int key;
 
+            Log.d("SAVE", "Saving Data");
+
             for (int i = 0; i < data.size(); i++) {
                 key = data.keyAt(i);
 
                 bw.write(Integer.toString(key));
+                Log.d("KEY", Integer.toString(key));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
+                Log.d("PLAĆA", Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
+                Log.d("POTNI STROŠKI VSOTA", Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
                 bw.newLine();
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
+                Log.d("POTNI STROŠKI GORIVO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
                 bw.newLine();
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
+                Log.d("POTNI STROŠKI AVTO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(HRANA).get(VSOTA)));

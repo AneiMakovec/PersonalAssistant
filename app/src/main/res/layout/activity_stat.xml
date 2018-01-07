@@ -1,75 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingLeft="16dp"
     android:paddingRight="16dp" >
 
     <com.github.mikephil.charting.charts.LineChart
         android:id="@+id/line_chart"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_height="wrap_content" />
 
     <TextView
-        android:id="@+id/income"
-        android:layout_width="wrap_content"
+        android:id="@+id/stat_income"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line_chart"
-        android:layout_toLeftOf="@id/income_value"
-        android:layout_toStartOf="@id/income_value"
-        android:text="@string/stat_income"
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/income_value"
-        android:layout_width="wrap_content"
+        android:id="@+id/stat_outcome"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/line_chart"
-        android:layout_toRightOf="@id/income"
-        android:layout_toEndOf="@id/income"
         android:textSize="30sp" />
 
     <TextView
-        android:id="@+id/outcome"
-        android:layout_width="wrap_content"
+        android:id="@+id/stat_balance"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/income"
-        android:layout_toLeftOf="@id/outcome_value"
-        android:layout_toStartOf="@id/outcome_value"
-        android:text="@string/stat_outcome"
         android:textSize="30sp" />
 
-    <TextView
-        android:id="@+id/outcome_value"
-        android:layout_width="wrap_content"
+    <Button
+        android:id="@+id/stat_return_button"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/income_value"
-        android:layout_toRightOf="@id/outcome"
-        android:layout_toEndOf="@id/outcome"
-        android:textSize="30sp" />
+        android:text="@string/stat_return_button"/>
 
-    <TextView
-        android:id="@+id/balance"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/outcome"
-        android:layout_toLeftOf="@id/balance_value"
-        android:layout_toStartOf="@id/balance_value"
-        android:text="@string/stat_balance"
-        android:textSize="30sp" />
-
-    <TextView
-        android:id="@+id/balance_value"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/outcome_value"
-        android:layout_toRightOf="@id/balance"
-        android:layout_toEndOf="@id/balance"
-        android:textSize="30sp" />
-
-</RelativeLayout>
+</LinearLayout>
