@@ -3,7 +3,6 @@ package com.sminarska.emp.personalassistant;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.widget.DrawerLayout;
@@ -14,28 +13,21 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ExpandableListView;
-import android.widget.ExpandableListView.OnChildClickListener;
 import android.widget.ExpandableListView.OnGroupClickListener;
 import android.widget.ExpandableListView.OnGroupCollapseListener;
 import android.widget.ExpandableListView.OnGroupExpandListener;
-import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Scanner;
@@ -93,7 +85,6 @@ public class MainActivity extends AppCompatActivity {
     public static final String EXTRA_DATA_PER_DAY = "com.seminarska.emp.personalassistant.DATA";
 
     public static final String STORAGE_FILE_NAME = "personalassistant.data";
-    public static final String PREFERENCES_FILE_NAME = "personalassistantprefs";
 
     public static final int RESULT_REQUEST_ADD = 1;
     public static final int RESULT_REQUEST_SUB = 2;
@@ -262,32 +253,8 @@ public class MainActivity extends AppCompatActivity {
                                     refreshDisplay();
                                 }
                                 break;
-                            case R.id.drawer_second_list:
-                                if (!setListView) {
-                                    setListView = true;
-                                    setGraphView = false;
-                                    setStatView = false;
-
-                                    Toast.makeText(getApplicationContext(), "Spreminjam pogled: seznam", Toast.LENGTH_SHORT).show();
-
-                                    updateView();
-                                }
-                                break;
-                            case R.id.drawer_second_graph:
-                                if (!setGraphView) {
-                                    setListView = false;
-                                    setGraphView = true;
-                                    setStatView = false;
-
-                                    Toast.makeText(getApplicationContext(), "Spreminjam pogled: slika", Toast.LENGTH_SHORT).show();
-
-                                    updateView();
-                                }
-                                break;
                             case R.id.drawer_second_stat:
                                 if (!setStatView) {
-                                    setListView = false;
-                                    setGraphView = false;
                                     setStatView = true;
 
                                     Toast.makeText(getApplicationContext(), "Spreminjam pogled: statistika", Toast.LENGTH_SHORT).show();
@@ -522,7 +489,6 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Update the display of values for chosen time interval
      */
-    // TODO: poglej zakaj se restoran data ne ohrani med metodami restoreData in refreshDisplay
     private void refreshDisplay() {
         Calendar date = Calendar.getInstance();
         int balance = 0;
@@ -620,8 +586,6 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 continue;
             }
-
-            Log.d("VSOTA", Integer.toString(data.get(key - i).get(PLACA).get(VSOTA)));
 
             balance += values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA);
             values.get(PLACA).set(VSOTA, values.get(PLACA).get(VSOTA) + dailyValues.get(PLACA).get(VSOTA));
@@ -771,6 +735,8 @@ public class MainActivity extends AppCompatActivity {
         Intent intent;
 
         if (setStatView) {
+            setStatView = false;
+
             Calendar date = Calendar.getInstance();
 
             // začetni in končni datum uporabljen pri izrisu grafa
@@ -864,29 +830,21 @@ public class MainActivity extends AppCompatActivity {
 
                 int key = 0;
 
-                Log.d("RESTORE", "Restoring data");
-
                 while (sc.hasNext()) {
                     tempList = new ArrayList<>();
 
                     key = Integer.parseInt(sc.nextLine());
-                    Log.d("KEY", Integer.toString(key));
 
                     tempList.add(new ArrayList<Integer>());
                     tempList.get(PLACA).add(Integer.parseInt(sc.nextLine()));
-                    Log.d("PLAČA VSOTA", Integer.toString(tempList.get(PLACA).get(VSOTA)));
 
                     tempList.add(new ArrayList<Integer>());
                     tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
-                    Log.d("POTNI STROŠKI VSOTA", Integer.toString(tempList.get(POTNI_STROSKI).get(VSOTA)));
                     tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
-                    Log.d("POTNI STROŠKI GORIVO", Integer.toString(tempList.get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
                     tempList.get(POTNI_STROSKI).add(Integer.parseInt(sc.nextLine()));
-                    Log.d("POTNI STROŠKI AVTO", Integer.toString(tempList.get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
 
                     tempList.add(new ArrayList<Integer>());
                     tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
-                    Log.d("HRANA VSOTA", Integer.toString(tempList.get(HRANA).get(VSOTA)));
                     tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
                     tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
                     tempList.get(HRANA).add(Integer.parseInt(sc.nextLine()));
@@ -929,15 +887,6 @@ public class MainActivity extends AppCompatActivity {
                     tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
 
                     data.append(key, tempList);
-
-                    Log.d("DATA", "Key: " + Integer.toString(key) + ", Values:");
-
-                    Log.d("PLAČA VSOTA", Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
-                    Log.d("POTNI STROŠKI VSOTA", Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
-                    Log.d("POTNI STROŠKI GORIVO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
-                    Log.d("POTNI STROŠKI AVTO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
-
-                    //tempList.clear();
                 }
 
                 this.key = key;
@@ -949,7 +898,7 @@ public class MainActivity extends AppCompatActivity {
                 return false;
             }
         } catch (FileNotFoundException e) {
-            //Log.d("File Not Found", "Ne najdem datoteke " + STORAGE_FILE_NAME + ".");
+            Log.d("File Not Found", "Ne najdem datoteke " + STORAGE_FILE_NAME + ".");
             return false;
         }
     }
@@ -962,27 +911,20 @@ public class MainActivity extends AppCompatActivity {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(STORAGE_FILE_NAME, Context.MODE_PRIVATE)));
             int key;
 
-            Log.d("SAVE", "Saving Data");
-
             for (int i = 0; i < data.size(); i++) {
                 key = data.keyAt(i);
 
                 bw.write(Integer.toString(key));
-                Log.d("KEY", Integer.toString(key));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
-                Log.d("PLAĆA", Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
-                Log.d("POTNI STROŠKI VSOTA", Integer.toString(data.get(key).get(POTNI_STROSKI).get(VSOTA)));
                 bw.newLine();
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
-                Log.d("POTNI STROŠKI GORIVO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_GORIVO)));
                 bw.newLine();
                 bw.write(Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
-                Log.d("POTNI STROŠKI AVTO", Integer.toString(data.get(key).get(POTNI_STROSKI).get(POTNI_STROSKI_AVTO)));
                 bw.newLine();
 
                 bw.write(Integer.toString(data.get(key).get(HRANA).get(VSOTA)));
@@ -1058,8 +1000,7 @@ public class MainActivity extends AppCompatActivity {
 
             return true;
         } catch (IOException e) {
-            //Log.d("IO Error", "Napaka pri shranjevanju podatkov v notranji pomnilnik.");
-            //e.printStackTrace();
+            Log.d("IO Error", "Napaka pri shranjevanju podatkov v notranji pomnilnik.");
             return false;
         }
     }

@@ -22,17 +22,9 @@
             android:id="@+id/drawer_second_subsection"
             android:title="@string/drawer_second_subsection">
             <menu>
-                <group android:checkableBehavior="single">
-                    <item
-                        android:id="@+id/drawer_second_list"
-                        android:title="@string/drawer_second_list" />
-                    <item
-                        android:id="@+id/drawer_second_graph"
-                        android:title="@string/drawer_second_graph" />
-                    <item
-                        android:id="@+id/drawer_second_stat"
-                        android:title="@string/drawer_second_stat" />
-                </group>
+                <item
+                    android:id="@+id/drawer_second_stat"
+                    android:title="@string/drawer_second_stat" />
             </menu>
         </item>
 </menu>
