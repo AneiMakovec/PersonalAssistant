@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sminarska.emp.personalassistant.KategorijeActivity">
+    tools:context="com.sminarska.emp.personalassistant.KategorijeActivity"
+    android:background="@drawable/main_activity_gradient">
 
 
     <TableRow
@@ -33,7 +34,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="450dp"
             android:text="Dodaj kategorijo"
-            android:textSize="16sp" />
+            android:textSize="16sp"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
 </android.support.constraint.ConstraintLayout>

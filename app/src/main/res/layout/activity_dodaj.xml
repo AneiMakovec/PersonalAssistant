@@ -4,7 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.sminarska.emp.personalassistant.DodajActivity">
+    tools:context="com.sminarska.emp.personalassistant.DodajActivity"
+    android:background="@drawable/main_activity_gradient">
 
 
     <TableRow
@@ -31,7 +32,8 @@
             android:layout_marginLeft="16dp"
             android:text="Briši"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/rezultat" />
+            app:layout_constraintStart_toEndOf="@+id/rezultat"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
     <TableRow
@@ -46,7 +48,8 @@
             android:layout_marginLeft="16dp"
             android:text="1"
             android:textSize="18sp"
-            android:layout_marginTop="100dp" />
+            android:layout_marginTop="100dp"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonDva"
@@ -56,7 +59,8 @@
             android:text="2"
             android:textSize="18sp"
             android:layout_marginTop="100dp"
-            app:layout_constraintStart_toEndOf="@+id/buttonEna" />
+            app:layout_constraintStart_toEndOf="@+id/buttonEna"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonTri"
@@ -66,7 +70,8 @@
             android:text="3"
             android:textSize="18sp"
             android:layout_marginTop="100dp"
-            app:layout_constraintStart_toEndOf="@+id/buttonDva" />
+            app:layout_constraintStart_toEndOf="@+id/buttonDva"
+            android:background="@drawable/main_activity_button"/>
         <Button
             android:id="@+id/buttonPlus"
             android:layout_width="75dp"
@@ -75,7 +80,8 @@
             android:text="+"
             android:textSize="18sp"
             android:layout_marginTop="100dp"
-            app:layout_constraintStart_toEndOf="@+id/buttonTri" />
+            app:layout_constraintStart_toEndOf="@+id/buttonTri"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
     <TableRow
@@ -90,7 +96,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="175dp"
             android:text="4"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonPet"
@@ -100,7 +107,8 @@
             android:layout_marginTop="175dp"
             android:text="5"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonStiri" />
+            app:layout_constraintStart_toEndOf="@+id/buttonStiri"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonSest"
@@ -110,7 +118,8 @@
             android:layout_marginTop="175dp"
             android:text="6"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonPet" />
+            app:layout_constraintStart_toEndOf="@+id/buttonPet"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonMinus"
@@ -120,7 +129,8 @@
             android:layout_marginTop="175dp"
             android:text="-"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonSest" />
+            app:layout_constraintStart_toEndOf="@+id/buttonSest"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
     <TableRow
@@ -135,7 +145,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="250dp"
             android:text="7"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonOsem"
@@ -145,7 +156,8 @@
             android:layout_marginTop="250dp"
             android:text="8"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonSedem" />
+            app:layout_constraintStart_toEndOf="@+id/buttonSedem"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonDevet"
@@ -155,7 +167,8 @@
             android:layout_marginTop="250dp"
             android:text="9"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonOsem" />
+            app:layout_constraintStart_toEndOf="@+id/buttonOsem"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonKrat"
@@ -165,7 +178,8 @@
             android:layout_marginTop="250dp"
             android:text="×"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonDevet" />
+            app:layout_constraintStart_toEndOf="@+id/buttonDevet"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
     <TableRow
@@ -180,7 +194,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="325dp"
             android:text="."
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonNic"
@@ -190,7 +205,8 @@
             android:layout_marginTop="325dp"
             android:text="0"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonPika" />
+            app:layout_constraintStart_toEndOf="@+id/buttonPika"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonEnako"
@@ -200,7 +216,8 @@
             android:layout_marginTop="325dp"
             android:text="="
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonNic" />
+            app:layout_constraintStart_toEndOf="@+id/buttonNic"
+            android:background="@drawable/main_activity_button"/>
 
         <Button
             android:id="@+id/buttonDeljeno"
@@ -210,7 +227,8 @@
             android:layout_marginTop="325dp"
             android:text="/"
             android:textSize="18sp"
-            app:layout_constraintStart_toEndOf="@+id/buttonEnako" />
+            app:layout_constraintStart_toEndOf="@+id/buttonEnako"
+            android:background="@drawable/main_activity_button"/>
     </TableRow>
 
     <TableRow
@@ -225,7 +243,8 @@
             android:layout_marginLeft="16dp"
             android:layout_marginTop="450dp"
             android:text="Izberi kategorijo"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:background="@drawable/main_activity_button"/>
 
     </TableRow>
 

@@ -3,4 +3,22 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="listItemBackTopGradient">#13667b</color>
+    <color name="listItemBackBotGradient">#00c5cd</color>
+    <color name="listItemTextGradient">#ffe17e</color>
+
+    <color name="mainActivityBackTopGradient">#3eb8c5</color>
+    <color name="mainActivityBackBotGradient">#b1b4ae</color>
+    <color name="mainActivityButtonBackground">#b7e7d7</color>
+    <color name="mainActivityButtonBorder">#636a5e</color>
+
+    <color name="statColorOne">#254980</color>
+    <color name="statColorTwo">#ffe17e</color>
+    <color name="statColorThree">#ff8000</color>
+    <color name="statColorFour">#c5007f</color>
+    <color name="statColorFive">#0088cf</color>
+    <color name="statColorSix">#ffc0cb</color>
+    <color name="statColorSeven">#966e09</color>
+    <color name="statColorEight">#9e1433</color>
 </resources>

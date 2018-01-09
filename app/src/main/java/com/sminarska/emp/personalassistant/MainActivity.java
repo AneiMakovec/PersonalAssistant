@@ -123,6 +123,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // add the listeners to the add and remove button
         Button odliv = (Button)findViewById(R.id.button7);
         Button priliv = (Button)findViewById(R.id.button8);
 
@@ -142,13 +143,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        /*
-        // check if the data structure was created in earlier usages of the program
-        SharedPreferences settings = getSharedPreferences(PREFERENCES_FILE_NAME, 0);
-        createdDataStructure = settings.getBoolean("dataCreated", false);
-        */
-
-
 
 
         // PREPARE THE DATA
@@ -166,8 +160,10 @@ public class MainActivity extends AppCompatActivity {
         expListView = (ExpandableListView) findViewById(R.id.lvExp);
 
 
+        // if data was restored from internal memory display it
         if (restoredDataStructure) {
             refreshDisplay();
+        // otherwise display a clean view
         } else {
             prepareExpandableListData();
 
@@ -178,7 +174,7 @@ public class MainActivity extends AppCompatActivity {
         }
 
 
-        // Listview Group click listener
+        // add the listeners to the expandable list
         expListView.setOnGroupClickListener(new OnGroupClickListener() {
 
             @Override
@@ -188,14 +184,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Listview Group expanded listener
         expListView.setOnGroupExpandListener(new OnGroupExpandListener() {
 
             @Override
             public void onGroupExpand(int groupPosition) {}
         });
 
-        // Listview Group collasped listener
         expListView.setOnGroupCollapseListener(new OnGroupCollapseListener() {
 
             @Override
@@ -212,13 +206,14 @@ public class MainActivity extends AppCompatActivity {
         // get the layout
         drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
 
-        // add item activated listener
+        // add item selected listener
         drawerView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
                     @Override
                     public boolean onNavigationItemSelected(MenuItem menuItem) {
                         //menuItem.setChecked(true);
 
+                        // check which item was selected
                         switch (menuItem.getItemId()) {
                             case R.id.drawer_first_week:
                                 if (!displayWeek) {
@@ -278,15 +273,20 @@ public class MainActivity extends AppCompatActivity {
         int catIndex = 0;
         int subcatIndex = 0;
 
+        // check which result was recieved
         switch (requestCode) {
+            // adding
             case RESULT_REQUEST_ADD:
+                // check if result is ok
                 if (resultCode == Activity.RESULT_OK) {
                     amount = data.getIntExtra(DodajActivity.RESULT_ADDED_AMOUNT, 0);
                     catIndex = data.getIntExtra(DodajActivity.RESULT_CATEGORY_INDEX, 0);
                     subcatIndex = data.getIntExtra(DodajActivity.RESULT_SUBCATEGORY_INDEX, 0);
                 }
                 break;
+            // removing
             case RESULT_REQUEST_SUB:
+                // check if result is ok
                 if (resultCode == Activity.RESULT_OK) {
                     amount = - data.getIntExtra(DodajActivity.RESULT_ADDED_AMOUNT, 0);
                     catIndex = data.getIntExtra(DodajActivity.RESULT_CATEGORY_INDEX, 0);
@@ -297,7 +297,9 @@ public class MainActivity extends AppCompatActivity {
                 return;
         }
 
+        // apply changes to data structure
         addToDataStructure(catIndex, subcatIndex, amount);
+        // display changes to data structure
         refreshDisplay();
     }
 
@@ -305,13 +307,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
 
-        /*
-        SharedPreferences settings = getSharedPreferences(PREFERENCES_FILE_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putBoolean("dataCreated", createdDataStructure);
-        editor.commit();
-        */
-
+        // if the data structure was updated save the data to internal storage
         if (updatedDataStructure)
             saveData();
     }
@@ -396,24 +392,32 @@ public class MainActivity extends AppCompatActivity {
     private void prepareDataStructure() {
         data = new SparseArray<>();
 
+        // restore the data from internal storage if saved previously
+        // and check if data was restored
         restoredDataStructure = restoreData();
     }
 
     /*
-     * Add a value to the data structure
+     * Add a value to the data structure.
+     * The data structure is a SparseArray, which is like a HaskMap that only maps integers to some objects.
+     * The keys are the current days in the current year, so each day is mapped to the values that have been added on that day.
      */
     private void addToDataStructure(int category, int subCategory, int value) {
+        // remember which day it is when adding
         Calendar date = Calendar.getInstance();
         key = date.get(Calendar.DAY_OF_YEAR);
 
+        // remember that the data structure was updated
         if (!updatedDataStructure)
             updatedDataStructure = true;
 
+        // if there is already an entry mapped to this key add the value to that entry
         if (data.indexOfKey(key) >= 0) {
             data.get(key).get(category).set(subCategory, data.get(key).get(category).get(subCategory) + value);
 
             if (category != PLACA)
                 data.get(key).get(category).set(VSOTA, data.get(key).get(category).get(VSOTA) + value);
+        // if there isn't any entry mapped to this key, create it
         } else {
             List<List<Integer>> catList = new ArrayList<>();
 
@@ -493,10 +497,10 @@ public class MainActivity extends AppCompatActivity {
         Calendar date = Calendar.getInstance();
         int balance = 0;
 
-        // število predhodnih dni
+        // number of past days
         int day;
 
-        // seznam vsot podatkov
+        // list of sums of values in each category
         List<List<Integer>> values = new ArrayList<>();
 
         List<Integer> placa = new ArrayList<>();
@@ -559,16 +563,16 @@ public class MainActivity extends AppCompatActivity {
         values.add(darila);
         values.add(prostiCas);
 
-        // seznam podatkov za trenuten dan
+        // list of values for each day
         List<List<Integer>> dailyValues;
 
-        // prikaz na teden
+        // display per week
         if (displayWeek) {
             day = date.get(Calendar.DAY_OF_WEEK);
-            // prikaz na mesec
+            // display per month
         } else if (displayMonth) {
             day = date.get(Calendar.DAY_OF_MONTH);
-            // prikaz na leto
+            // display per year
         } else if (displayYear) {
             day = date.get(Calendar.DAY_OF_YEAR);
         } else {
@@ -576,7 +580,7 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
 
-        // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
+        // we move backwards through the entries in the past days and sum up the values for each day
         for (int i = 0; i < day; i++) {
             if (key - i == 0)
                 key = 365 + i;
@@ -639,6 +643,7 @@ public class MainActivity extends AppCompatActivity {
             values.get(PROSTI_CAS).set(PROSTI_CAS_DRUGO, values.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO) + dailyValues.get(PROSTI_CAS).get(PROSTI_CAS_DRUGO));
         }
 
+        // update the expandable list data
         updateExpandableListData(values, balance);
     }
 
@@ -730,37 +735,38 @@ public class MainActivity extends AppCompatActivity {
     /*
      * Update the view of the main activity to the chosen form
      */
-    // TODO: popravi updateView, da bo upoštevala popravljene vrednosti
     private void updateView() {
         Intent intent;
 
+        // if view statistics menu item is selected
         if (setStatView) {
+            // reset the selection
             setStatView = false;
 
             Calendar date = Calendar.getInstance();
 
-            // začetni in končni datum uporabljen pri izrisu grafa
+            // the starting and ending day which are to be displayed in the graph
             int startDay, endDay;
 
-            // število predhodnih dni
+            // number of past days accoring to current display
             int day;
 
-            // začasen seznam podatkov po kategorijah
-            List<Integer> values = new ArrayList<>();
+            // temporary list of values for each category
+            List<Integer> values;
 
-            // seznam podatkov, ki jih pošljemo aktivnosti s statistiko
+            // list of sums that we send to the statistics graph to be displayed
             List<List<Integer>> graphValues = new ArrayList<>();
 
-            // seznam podatkov za trenuten dan
+            // mapped list of values for each day
             List<List<Integer>> dailyValues;
 
-            // prikaz na teden
+            // display per week
             if (displayWeek) {
                 day = date.get(Calendar.DAY_OF_WEEK);
-            // prikaz na mesec
+            // display per month
             } else if (displayMonth) {
                 day = date.get(Calendar.DAY_OF_MONTH);
-            // prikaz na leto
+            // display per year
             } else if (displayYear) {
                 day = date.get(Calendar.DAY_OF_YEAR);
             } else {
@@ -771,15 +777,17 @@ public class MainActivity extends AppCompatActivity {
             startDay = key;
             endDay = key;
 
-            // pomikamo se po dnevih nazaj in si beležimo vsote podatkov za vsako kategorijo v posameznem dnevu
+            // we move backwards through the entries in the past days and sum up the values for each day
             for (int i = 0; i < day; i++) {
                 if (key - i == 0)
                     key = 365 + i;
 
-                values.clear();
+                values = new ArrayList<>();
 
+                // if mapping for current day exists, move on
                 if (data.indexOfKey(key - i) >= 0) {
                     dailyValues = data.get(key - i);
+                // else end searching
                 } else {
                     startDay = key - i;
                     break;
@@ -792,6 +800,7 @@ public class MainActivity extends AppCompatActivity {
                 graphValues.add(values);
             }
 
+            // sent the data to the statistics graph
             intent = new Intent(this, StatActivity.class);
             intent.putExtra(EXTRA_START_DAY, startDay);
             intent.putExtra(EXTRA_END_DAY, endDay);
@@ -825,16 +834,20 @@ public class MainActivity extends AppCompatActivity {
         try {
             Scanner sc = new Scanner(new BufferedReader(new InputStreamReader(openFileInput(STORAGE_FILE_NAME))));
 
+            // if there is something to be read
             if (sc.hasNext()) {
                 List<List<Integer>> tempList;
 
                 int key = 0;
 
+                // each iteration rapresents one day of entries to be mapped
                 while (sc.hasNext()) {
                     tempList = new ArrayList<>();
 
+                    // first, read the key (day)
                     key = Integer.parseInt(sc.nextLine());
 
+                    // and then the data
                     tempList.add(new ArrayList<Integer>());
                     tempList.get(PLACA).add(Integer.parseInt(sc.nextLine()));
 
@@ -886,9 +899,11 @@ public class MainActivity extends AppCompatActivity {
                     tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
                     tempList.get(PROSTI_CAS).add(Integer.parseInt(sc.nextLine()));
 
+                    // map the data to the day it was created
                     data.append(key, tempList);
                 }
 
+                // remember the last day data was entered
                 this.key = key;
 
                 sc.close();
@@ -911,12 +926,15 @@ public class MainActivity extends AppCompatActivity {
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(openFileOutput(STORAGE_FILE_NAME, Context.MODE_PRIVATE)));
             int key;
 
+            // each iteration rapresents data mapped to a certain day
             for (int i = 0; i < data.size(); i++) {
                 key = data.keyAt(i);
 
+                // store the key
                 bw.write(Integer.toString(key));
                 bw.newLine();
 
+                // and then the data
                 bw.write(Integer.toString(data.get(key).get(PLACA).get(VSOTA)));
                 bw.newLine();
 
@@ -995,6 +1013,7 @@ public class MainActivity extends AppCompatActivity {
                 bw.write(Integer.toString(data.get(key).get(PROSTI_CAS).get(PROSTI_CAS_DRUGO)));
             }
 
+            // flush the buffer into the file
             bw.flush();
             bw.close();
 

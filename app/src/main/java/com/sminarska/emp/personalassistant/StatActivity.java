@@ -3,6 +3,7 @@ package com.sminarska.emp.personalassistant;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -43,6 +44,7 @@ public class StatActivity extends AppCompatActivity {
         // get the chart view
         chart = (LineChart) findViewById(R.id.line_chart);
 
+        // create the arrays of chart entries
         List<Entry> entryPlaca = new ArrayList<Entry>();
         List<Entry> entryPot = new ArrayList<Entry>();
         List<Entry> entryHrana = new ArrayList<Entry>();
@@ -55,6 +57,7 @@ public class StatActivity extends AppCompatActivity {
         int income = 0;
         int outcome = 0;
 
+        // merge the data for each category in its own entry array
         for (int i = data.size() - 1; i >= 0; i--) {
             entryPlaca.add(new Entry(temp, data.get(i).get(0)));
             income += data.get(i).get(0);
@@ -76,6 +79,7 @@ public class StatActivity extends AppCompatActivity {
             temp++;
         }
 
+        // calculate and display the balance
         int balance = income - outcome;
 
         TextView incomeValue = (TextView) findViewById(R.id.stat_income);
@@ -90,25 +94,28 @@ public class StatActivity extends AppCompatActivity {
         outcomeValue.setText(outcomeString);
         ballanceValue.setText(balanceString);
 
+        // create the data sets for each category
         LineDataSet placaSet = new LineDataSet(entryPlaca, "Plača");
-        placaSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet potSet = new LineDataSet(entryPot, "Potni stroški");
-        potSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet hranaSet = new LineDataSet(entryHrana, "Hrana");
-        hranaSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet oblekeSet = new LineDataSet(entryObleke, "Oblačila");
-        oblekeSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet hisaSet = new LineDataSet(entryHisa, "Hišni stroški");
-        hisaSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet igraceSet = new LineDataSet(entryIgrace, "Igrače");
-        igraceSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet darilaSet = new LineDataSet(entryDarila, "Darila");
-        darilaSet.setAxisDependency(YAxis.AxisDependency.LEFT);
         LineDataSet prostCasSet = new LineDataSet(entryProstCas, "Prosti čas");
-        prostCasSet.setAxisDependency(YAxis.AxisDependency.LEFT);
 
-        // TODO: colors
+        // set colors
+        // TODO: ugotovi, zakaj ko izriše podatke so vsi enakih barv
+        placaSet.setColor(R.color.statColorOne);
+        potSet.setColor(R.color.statColorTwo);
+        hranaSet.setColor(R.color.statColorThree);
+        oblekeSet.setColor(R.color.statColorFour);
+        hisaSet.setColor(R.color.statColorFive);
+        igraceSet.setColor(R.color.statColorSix);
+        darilaSet.setColor(R.color.statColorSeven);
+        prostCasSet.setColor(R.color.statColorEight);
 
+        // add the data sets to an array of data sets
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
         dataSets.add(placaSet);
         dataSets.add(potSet);
@@ -119,11 +126,16 @@ public class StatActivity extends AppCompatActivity {
         dataSets.add(darilaSet);
         dataSets.add(prostCasSet);
 
+        // format the data sets into a single line data
         LineData graphData = new LineData(dataSets);
 
+        // add the data to the chart
         chart.setData(graphData);
+        chart.setVisibleXRange(start, end);
+        // display the data on the chart
         chart.invalidate();
 
+        // set the return listener on the button
         Button returnButton = (Button) findViewById(R.id.stat_return_button);
 
         returnButton.setOnClickListener(new View.OnClickListener() {
