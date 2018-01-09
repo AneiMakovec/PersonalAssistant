@@ -44,7 +44,7 @@ public class KategorijeActivity extends AppCompatActivity {
         kategorije.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                Toast.makeText(getApplicationContext(), kategorije.getItemAtPosition(i).toString() + " selected!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), kategorije.getItemAtPosition(i).toString() + " izbrana!", Toast.LENGTH_SHORT).show();
                 result = i;
             }
         });

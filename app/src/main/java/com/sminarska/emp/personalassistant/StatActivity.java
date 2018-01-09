@@ -9,6 +9,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.LineChart;
+import com.github.mikephil.charting.components.Description;
+import com.github.mikephil.charting.components.Legend;
 import com.github.mikephil.charting.components.YAxis;
 import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.LineData;
@@ -105,15 +107,32 @@ public class StatActivity extends AppCompatActivity {
         LineDataSet prostCasSet = new LineDataSet(entryProstCas, "Prosti čas");
 
         // set colors
-        // TODO: ugotovi, zakaj ko izriše podatke so vsi enakih barv
-        placaSet.setColor(R.color.statColorOne);
-        potSet.setColor(R.color.statColorTwo);
-        hranaSet.setColor(R.color.statColorThree);
-        oblekeSet.setColor(R.color.statColorFour);
-        hisaSet.setColor(R.color.statColorFive);
-        igraceSet.setColor(R.color.statColorSix);
-        darilaSet.setColor(R.color.statColorSeven);
-        prostCasSet.setColor(R.color.statColorEight);
+        placaSet.setColor(getResources().getColor(R.color.statColorOne));
+        potSet.setColor(getResources().getColor(R.color.statColorTwo));
+        hranaSet.setColor(getResources().getColor(R.color.statColorThree));
+        oblekeSet.setColor(getResources().getColor(R.color.statColorFour));
+        hisaSet.setColor(getResources().getColor(R.color.statColorFive));
+        igraceSet.setColor(getResources().getColor(R.color.statColorSix));
+        darilaSet.setColor(getResources().getColor(R.color.statColorSeven));
+        prostCasSet.setColor(getResources().getColor(R.color.statColorEight));
+
+        placaSet.setCircleColor(getResources().getColor(R.color.statColorOne));
+        potSet.setCircleColor(getResources().getColor(R.color.statColorTwo));
+        hranaSet.setCircleColor(getResources().getColor(R.color.statColorThree));
+        oblekeSet.setCircleColor(getResources().getColor(R.color.statColorFour));
+        hisaSet.setCircleColor(getResources().getColor(R.color.statColorFive));
+        igraceSet.setCircleColor(getResources().getColor(R.color.statColorSix));
+        darilaSet.setCircleColor(getResources().getColor(R.color.statColorSeven));
+        prostCasSet.setCircleColor(getResources().getColor(R.color.statColorEight));
+
+        placaSet.setCircleColorHole(getResources().getColor(R.color.statColorOne));
+        potSet.setCircleColorHole(getResources().getColor(R.color.statColorTwo));
+        hranaSet.setCircleColorHole(getResources().getColor(R.color.statColorThree));
+        oblekeSet.setCircleColorHole(getResources().getColor(R.color.statColorFour));
+        hisaSet.setCircleColorHole(getResources().getColor(R.color.statColorFive));
+        igraceSet.setCircleColorHole(getResources().getColor(R.color.statColorSix));
+        darilaSet.setCircleColorHole(getResources().getColor(R.color.statColorSeven));
+        prostCasSet.setCircleColorHole(getResources().getColor(R.color.statColorEight));
 
         // add the data sets to an array of data sets
         List<ILineDataSet> dataSets = new ArrayList<ILineDataSet>();
@@ -128,6 +147,15 @@ public class StatActivity extends AppCompatActivity {
 
         // format the data sets into a single line data
         LineData graphData = new LineData(dataSets);
+
+        // set the legend to not clip outside of screen
+        Legend legend = chart.getLegend();
+        legend.setWordWrapEnabled(true);
+
+        // set the description text
+        Description desc = new Description();
+        desc.setText("Prihodki in odhodki po kategorijah.");
+        chart.setDescription(desc);
 
         // add the data to the chart
         chart.setData(graphData);
